@@ -16,12 +16,13 @@ Tweet etkileşimlerini tahmin etme oyunu! Hangi tweet daha çok beğeni, retweet
 - 📊 **3 Zorluk Seviyesi**: Kolay, Orta, Zor
 - 🌍 **Çoklu Dil**: Türkçe ve İngilizce desteği
 - 📈 **En Yüksek Skor**: Kendi rekorunu kır
-- 🎨 **Modern Tasarım**: Responsive ve dark mode desteği
+- 🎨 **Modern Tasarım**: Responsive (mobil öncelikli) tasarım
 
 ## 🚀 Yerel Geliştirme
 
 ### Gereksinimler
-- Python 3.x (sadece CSV'yi JSON'a çevirmek için)
+- Python 3.x (sadece lokal test için)
+- Modern web tarayıcısı
 
 ### Kurulum
 
@@ -31,20 +32,17 @@ git clone https://github.com/kullanici-adi/tweetBattle.git
 cd tweetBattle
 ```
 
-2. **CSV'yi JSON'a çevirin (isteğe bağlı):**
-```bash
-python csv_to_json.py
-```
-
-3. **Sunucuyu başlatın:**
+2. **Sunucuyu başlatın (lokal test için):**
 ```bash
 python start_server.py
 ```
 
-4. **Tarayıcıda açın:**
+3. **Tarayıcıda açın:**
 ```
 http://localhost:8000/index.html
 ```
+
+**Not:** `start_server.py` sadece lokal geliştirme içindir. GitHub Pages'te gerekli değildir.
 
 ## 📁 Dosya Yapısı
 
@@ -52,9 +50,10 @@ http://localhost:8000/index.html
 - `game.html` - Oyun ekranı
 - `gameover.html` - Oyun bitti ekranı
 - `translations.js` - Çeviri dosyası
-- `tweets_pool.json` - Tweet verileri
-- `csv_to_json.py` - CSV'den JSON'a dönüştürücü
-- `start_server.py` - Yerel HTTP sunucusu
+- `tweets_pool.json` - Tweet verileri (gerekli)
+- `twitter-posts.csv` - Tweet verileri (kaynak)
+- `start_server.py` - Yerel HTTP sunucusu (lokal test için)
+- `csv_to_json.py` - CSV'den JSON'a dönüştürücü (isteğe bağlı)
 
 ## 🌐 GitHub Pages'e Deploy
 
@@ -79,8 +78,9 @@ git push -u origin main
 ## 📝 Notlar
 
 - `tweets_pool.json` dosyası gereklidir (tweet verileri için)
-- CSV dosyasından JSON oluşturmak için `csv_to_json.py` kullanın
 - Tüm veriler tarayıcıda (localStorage) saklanır
+- `start_server.py` sadece lokal test içindir (CORS sorununu çözmek için)
+- GitHub Pages'te direkt çalışır, sunucuya gerek yok
 
 ## 📄 Lisans
 
