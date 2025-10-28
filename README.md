@@ -78,6 +78,7 @@ git push -u origin main
 ## 📝 Notlar
 
 - `tweets_pool.json` dosyası gereklidir (tweet verileri için)
+- `twitter-posts.csv` ve `tweets_pool.json` repository'de mevcut, `csv_to_json.py` çalıştırmaya gerek yok
 - Tüm veriler tarayıcıda (localStorage) saklanır
 - `start_server.py` sadece lokal test içindir (CORS sorununu çözmek için)
 - GitHub Pages'te direkt çalışır, sunucuya gerek yok
