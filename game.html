@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tweet Battle Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="translations.js"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3eaef4",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101b22",
+              "text-light-primary": "#0F1419",
+              "text-light-secondary": "#536471",
+              "text-dark-primary": "#f5f7f8",
+              "text-dark-secondary": "#8899a6"
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "1rem",
+              "lg": "2rem",
+              "xl": "3rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .tweet-card {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
+            max-height: 240px;
+            overflow: hidden;
+        }
+        .tweet-content-scrollable {
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+            flex: 1;
+            min-height: 0;
+        }
+        .tweet-content-scrollable::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tweet-content-scrollable::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .tweet-content-scrollable::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+        .tweet-content-scrollable::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        #bottomTweetCard {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tweet-card.slide-up {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        .tweet-card.slide-down {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        .tweet-card.slide-in {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .tweet-card.initial-slide-in {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        .tweet-text {
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+        }
+        .tweet-text::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tweet-text::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .tweet-text::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+        .tweet-text::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <style>
+    body {
+        animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .fade-out {
+        animation: fadeOut 0.15s ease-in forwards;
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+  </style>
+  </head>
+<body class="font-display overflow-hidden">
+<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<!-- Top App Bar -->
+<div class="relative flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
+<!-- Back Button -->
+<button id="backButton" class="absolute left-4 top-4 flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-background-dark shadow-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-2xl text-text-light-primary dark:text-text-dark-primary">arrow_back</span>
+</button>
+
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="swords">
+    swords
+</span>
+<h1 class="text-[#0d161c] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight">Tweet Battle</h1>
+</div>
+<main class="relative flex flex-col flex-1 px-4 py-6 gap-4 min-h-0 overflow-hidden">
+<!-- First Tweet Card (Visible Stats) -->
+<div id="topTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 0%; min-height: 0;">
+<div class="tweet-content-scrollable px-4 pt-2">
+<div class="flex flex-col items-center gap-3 mb-4">
+<div class="w-12 h-12 shrink-0 bg-center bg-no-repeat bg-cover rounded-full" data-alt="Profile avatar" id="topTweetAvatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCCH7NLLq50a3h1sC0XnEmhTBWJAJpGirdSRRvf_NOSHsMihYK5VBovRmYsgiAqURCkWB33bWBr5ss3-bU50B1H4tBr20ydYXe85_hq0vwqLMC5gywjU7Q6F5QFTW5Hcv9fHb3YiXIy-nFlm0BW64KYHkMnd-LTD9DZ1m7D-y4Q-NLmUcXSOkxhJTO5SGkKWLdsmbsKbAQLlcqrHDPu1pYcQZVsPYvW0AdGkLWyAxIisqz6jluCgyCn2Ono85GMXY342o4PvNXoyEc");'></div>
+<div class="flex flex-col items-center justify-center flex-1 text-center">
+<div class="flex items-center gap-1">
+<p class="text-text-light-primary dark:text-text-dark-primary text-base font-bold leading-tight" id="topTweetName">Real User One</p>
+<p class="text-text-light-secondary dark:text-text-dark-secondary text-base font-normal leading-normal" id="topTweetUsername">@realuserone</p>
+</div>
+<p class="text-text-light-primary dark:text-text-dark-primary text-base font-normal leading-normal mt-1" id="topTweetText">This is a tweet that everyone can see the stats for. It's a great example of a viral tweet. Hard to beat this one!</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-center gap-6 text-text-light-secondary dark:text-text-dark-secondary px-4 py-2 flex-shrink-0">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">favorite</span>
+<span class="text-sm font-semibold" id="topTweetLikes">15.2K</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">repeat</span>
+<span class="text-sm font-semibold" id="topTweetRetweets">2.1K</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-lg">bar_chart</span>
+<span class="text-sm font-semibold" id="topTweetViews">1.3M</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center flex-shrink-0">
+<div class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
+<span class="font-bold text-lg text-text-light-secondary dark:text-text-dark-secondary">VS</span>
+</div>
+</div>
+<!-- Second Tweet Card (Hidden Stats) -->
+<div id="bottomTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 0%; min-height: 0;">
+<div class="tweet-content-scrollable px-4 pt-2">
+<div class="flex flex-col items-center gap-3 mb-4">
+<div class="w-12 h-12 shrink-0 bg-center bg-no-repeat bg-cover rounded-full" data-alt="Profile avatar" id="bottomTweetAvatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1u-SXQ4aAVmmO2R9BT-CkLFmKlp5wLuBkg0zb784o8y32zLKYGG1rgSyw7_rJZc7ygxcluRqOKo9gvVzI8H5zJ4nYTnqJR1HdDhhoSoA3naeVeWsO8m-PE6s4zIjGx4wXzcMfPtY5pQr-VGD1b47n16XD3-a7Sy2iNyNyu3ldP-5Eo6gn_EPM75dyHZZHnSPUvaq5vQZibPBa14B3wFXxwpiE2je_4FB6FkLGsG_h2PFEkJvQBYBpqP8orOE7nLGnBEUIPVnA9_M");'></div>
+<div class="flex flex-col items-center justify-center flex-1 text-center">
+<div class="flex items-center gap-1">
+<p class="text-text-light-primary dark:text-text-dark-primary text-base font-bold leading-tight" id="bottomTweetName">Another User</p>
+<p class="text-text-light-secondary dark:text-text-dark-secondary text-base font-normal leading-normal" id="bottomTweetUsername">@anotheruser</p>
+</div>
+<p class="text-text-light-primary dark:text-text-dark-primary text-base font-normal leading-normal mt-1" id="bottomTweetText">This is the second tweet, and the user has to guess if its stats are higher or lower than the first one. What do you think?</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-center gap-6 text-text-light-secondary dark:text-text-dark-secondary px-4 py-2 flex-shrink-0" id="bottomTweetStatsContainer">
+<div class="flex items-center gap-1 transition-colors" id="bottomTweetLikesContainer">
+<span class="material-symbols-outlined text-lg">favorite</span>
+<span class="text-lg font-bold" id="bottomTweetLikes">???</span>
+</div>
+<div class="flex items-center gap-1 transition-colors" id="bottomTweetRetweetsContainer">
+<span class="material-symbols-outlined text-lg">repeat</span>
+<span class="text-lg font-semibold" id="bottomTweetRetweets">???</span>
+</div>
+<div class="flex items-center gap-1 transition-colors" id="bottomTweetViewsContainer">
+<span class="material-symbols-outlined text-lg">bar_chart</span>
+<span class="text-lg font-semibold" id="bottomTweetViews">???</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Score Display -->
+<div class="flex items-center justify-center gap-4 px-4 py-3 bg-transparent">
+<h2 class="text-text-light-primary dark:text-text-dark-primary text-xl font-bold leading-tight tracking-[-0.015em]"><span id="gameScore">Skor</span>: <span id="scoreDisplay">0</span></h2>
+<div id="streakContainer" class="flex items-center gap-2 hidden">
+<span class="material-symbols-outlined text-2xl text-orange-500 animate-pulse">local_fire_department</span>
+<h3 class="text-orange-500 text-lg font-bold leading-tight"><span id="streakDisplay">0</span></h3>
+</div>
+<h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
+</div>
+<!-- Action Buttons -->
+<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+<div class="flex flex-1 gap-4 justify-between">
+<button id="lowerButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary/20 dark:bg-primary/30 text-primary text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined">arrow_downward</span>
+<span class="truncate">Düşük</span>
+</button>
+<button id="higherButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined">arrow_upward</span>
+<span class="truncate">Yüksek</span>
+</button>
+</div>
+</footer>
+</div>
+
+<script>
+// Tweet verileri (statik - daha sonra API'den çekilebilir)
+let tweetPool = [
+    {
+        name: "Real User One",
+        username: "@realuserone",
+        text: "This is a tweet that everyone can see the stats for. It's a great example of a viral tweet. Hard to beat this one!",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCCH7NLLq50a3h1sC0XnEmhTBWJAJpGirdSRRvf_NOSHsMihYK5VBovRmYsgiAqURCkWB33bWBr5ss3-bU50B1H4tBr20ydYXe85_hq0vwqLMC5gywjU7Q6F5QFTW5Hcv9fHb3YiXIy-nFlm0BW64KYHkMnd-LTD9DZ1m7D-y4Q-NLmUcXSOkxhJTO5SGkKWLdsmbsKbAQLlcqrHDPu1pYcQZVsPYvW0AdGkLWyAxIisqz6jluCgyCn2Ono85GMXY342o4PvNXoyEc",
+        likes: 15200,
+        retweets: 2100,
+        views: 1300000
+    },
+    {
+        name: "Another User",
+        username: "@anotheruser",
+        text: "This is the second tweet, and the user has to guess if its stats are higher or lower than the first one. What do you think?",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1u-SXQ4aAVmmO2R9BT-CkLFmKlp5wLuBkg0zb784o8y32zLKYGG1rgSyw7_rJZc7ygxcluRqOKo9gvVzI8H5zJ4nYTnqJR1HdDhhoSoA3naeVeWsO8m-PE6s4zIjGx4wXzcMfPtY5pQr-VGD1b47n16XD3-a7Sy2iNyNyu3ldP-5Eo6gn_EPM75dyHZZHnSPUvaq5vQZibPBa14B3wFXxwpiE2je_4FB6FkLGsG_h2PFEkJvQBYBpqP8orOE7nLGnBEUIPVnA9_M",
+        likes: 8500,
+        retweets: 1200,
+        views: 890000
+    },
+    {
+        name: "Tech Enthusiast",
+        username: "@techlover",
+        text: "Just discovered an amazing new feature! This will change everything we know about web development.",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCCH7NLLq50a3h1sC0XnEmhTBWJAJpGirdSRRvf_NOSHsMihYK5VBovRmYsgiAqURCkWB33bWBr5ss3-bU50B1H4tBr20ydYXe85_hq0vwqLMC5gywjU7Q6F5QFTW5Hcv9fHb3YiXIy-nFlm0BW64KYHkMnd-LTD9DZ1m7D-y4Q-NLmUcXSOkxhJTO5SGkKWLdsmbsKbAQLlcqrHDPu1pYcQZVsPYvW0AdGkLWyAxIisqz6jluCgyCn2Ono85GMXY342o4PvNXoyEc",
+        likes: 25000,
+        retweets: 3500,
+        views: 2400000
+    },
+    {
+        name: "Food Blogger",
+        username: "@foodie",
+        text: "Tried this new restaurant and wow! The flavors are incredible. Definitely recommend to everyone!",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1u-SXQ4aAVmmO2R9BT-CkLFmKlp5wLuBkg0zb784o8y32zLKYGG1rgSyw7_rJZc7ygxcluRqOKo9gvVzI8H5zJ4nYTnqJR1HdDhhoSoA3naeVeWsO8m-PE6s4zIjGx4wXzcMfPtY5pQr-VGD1b47n16XD3-a7Sy2iNyNyu3ldP-5Eo6gn_EPM75dyHZZHnSPUvaq5vQZibPBa14B3wFXxwpiE2je_4FB6FkLGsG_h2PFEkJvQBYBpqP8orOE7nLGnBEUIPVnA9_M",
+        likes: 3200,
+        retweets: 450,
+        views: 180000
+    },
+    {
+        name: "Traveler",
+        username: "@wanderlust",
+        text: "The view from this mountain peak is absolutely breathtaking! Nature never fails to amaze me.",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCCH7NLLq50a3h1sC0XnEmhTBWJAJpGirdSRRvf_NOSHsMihYK5VBovRmYsgiAqURCkWB33bWBr5ss3-bU50B1H4tBr20ydYXe85_hq0vwqLMC5gywjU7Q6F5QFTW5Hcv9fHb3YiXIy-nFlm0BW64KYHkMnd-LTD9DZ1m7D-y4Q-NLmUcXSOkxhJTO5SGkKWLdsmbsKbAQLlcqrHDPu1pYcQZVsPYvW0AdGkLWyAxIisqz6jluCgyCn2Ono85GMXY342o4PvNXoyEc",
+        likes: 18000,
+        retweets: 2800,
+        views: 1500000
+    },
+    {
+        name: "Gamer Pro",
+        username: "@gamerlife",
+        text: "Just achieved the highest score in the game! Can't believe it! Hours of practice finally paid off.",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1u-SXQ4aAVmmO2R9BT-CkLFmKlp5wLuBkg0zb784o8y32zLKYGG1rgSyw7_rJZc7ygxcluRqOKo9gvVzI8H5zJ4nYTnqJR1HdDhhoSoA3naeVeWsO8m-PE6s4zIjGx4wXzcMfPtY5pQr-VGD1b47n16XD3-a7Sy2iNyNyu3ldP-5Eo6gn_EPM75dyHZZHnSPUvaq5vQZibPBa14B3wFXxwpiE2je_4FB6FkLGsG_h2PFEkJvQBYBpqP8orOE7nLGnBEUIPVnA9_M",
+        likes: 5000,
+        retweets: 800,
+        views: 420000
+    }
+];
+
+// Oyun durumu
+let currentTopTweet = null;
+let currentBottomTweet = null;
+let score = 0;
+let usedTweets = new Set();
+let currentStatIndex = 0; // 0: likes, 1: retweets, 2: views
+let statsGuessed = [false, false, false]; // Hangi istatistikler tahmin edildi
+let streak = 0; // Seri sayısı
+
+// En yüksek skor yönetimi
+function getHighScore() {
+    return parseInt(localStorage.getItem('tweetBattleHighScore') || '0');
+}
+
+function updateHighScore(newScore) {
+    const currentHigh = getHighScore();
+    if (newScore > currentHigh) {
+        localStorage.setItem('tweetBattleHighScore', newScore.toString());
+        return true; // Yeni rekor
+    }
+    return false;
+}
+
+function updateScoreDisplay() {
+    document.getElementById('scoreDisplay').textContent = score;
+    const highScore = getHighScore();
+    document.getElementById('highScoreDisplay').textContent = highScore;
+    updateStreakDisplay();
+}
+
+function updateStreakDisplay() {
+    const streakContainer = document.getElementById('streakContainer');
+    const streakDisplay = document.getElementById('streakDisplay');
+    
+    if (streak > 0) {
+        streakContainer.classList.remove('hidden');
+        streakDisplay.textContent = streak;
+        
+        // Streak'e göre renk değişimi - daha fazla seviye
+        const fireIcon = streakContainer.querySelector('.material-symbols-outlined');
+        if (streak >= 30) {
+            // Çok yüksek streak - parlak kırmızı
+            fireIcon.classList.add('text-red-600');
+            fireIcon.classList.remove('text-orange-500', 'text-orange-600', 'text-yellow-500');
+        } else if (streak >= 20) {
+            // Yüksek streak - kırmızı
+            fireIcon.classList.add('text-red-600');
+            fireIcon.classList.remove('text-orange-500', 'text-orange-600', 'text-yellow-500');
+        } else if (streak >= 10) {
+            // Orta-yüksek streak - koyu turuncu
+            fireIcon.classList.add('text-orange-600');
+            fireIcon.classList.remove('text-orange-500', 'text-yellow-500', 'text-red-600');
+        } else if (streak >= 5) {
+            // Düşük streak - turuncu
+            fireIcon.classList.add('text-orange-500');
+            fireIcon.classList.remove('text-orange-600', 'text-yellow-500', 'text-red-600');
+        } else {
+            fireIcon.classList.add('text-orange-500');
+            fireIcon.classList.remove('text-orange-600', 'text-yellow-500', 'text-red-600');
+        }
+    } else {
+        streakContainer.classList.add('hidden');
+    }
+}
+
+function getStreakBonus() {
+    // Streak bonus hesaplama: Her 5 streak'te +1, 20'de +4, 25'te +5, 30'da +6, vb.
+    if (streak < 5) return 0;
+    // Math.floor(streak / 5) formülü: 5=>1, 10=>2, 15=>3, 20=>4, 25=>5, 30=>6, 35=>7, 40=>8...
+    return Math.floor(streak / 5);
+}
+const statTypes = ['likes', 'retweets', 'views'];
+
+// Sayıyı formatla (15.2K, 1.3M gibi)
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+
+// Tweet için toplam engagement skoru hesapla
+function calculateEngagement(tweet) {
+    // Ağırlıklı toplam: likes (en önemli), retweets, views
+    // Likes: 1.0, Retweets: 0.8, Views: 0.1 (views çok fazla olabildiği için düşük ağırlık)
+    return tweet.likes * 1.0 + tweet.retweets * 0.8 + (tweet.views / 100) * 0.1;
+}
+
+// Kullanılmamış rastgele tweet seç
+function getDifficultyFilter() {
+    // Zorluk seviyesine göre tweet filtrele
+    const difficulty = localStorage.getItem('difficulty') || 'medium';
+    const allTweets = tweetPool.filter((_, index) => !usedTweets.has(index));
+    
+    if (allTweets.length === 0) {
+        usedTweets.clear();
+        return tweetPool;
+    }
+    
+    if (allTweets.length < 2) {
+        return allTweets;
+    }
+    
+    // Her tweet için engagement skoru hesapla
+    const tweetsWithEngagement = allTweets.map(tweet => ({
+        tweet: tweet,
+        engagement: calculateEngagement(tweet)
+    }));
+    
+    // Engagement skorlarına göre sırala
+    tweetsWithEngagement.sort((a, b) => a.engagement - b.engagement);
+    
+    // Engagement değerlerini al
+    const engagements = tweetsWithEngagement.map(t => t.engagement);
+    const minEngagement = Math.min(...engagements);
+    const maxEngagement = Math.max(...engagements);
+    const range = maxEngagement - minEngagement;
+    
+    if (range === 0) {
+        // Tüm tweetler aynı engagement'a sahip, hepsini döndür
+        return allTweets;
+    }
+    
+    let filteredTweets = [];
+    
+    if (difficulty === 'easy') {
+        // Kolay: En yüksek ve en düşük engagement'lı tweetler
+        // İlk %20 (düşük) ve son %20 (yüksek) al
+        const bottom20 = Math.ceil(tweetsWithEngagement.length * 0.2);
+        const top20 = Math.ceil(tweetsWithEngagement.length * 0.2);
+        
+        filteredTweets = [
+            ...tweetsWithEngagement.slice(0, bottom20),
+            ...tweetsWithEngagement.slice(-top20)
+        ].map(t => t.tweet);
+        
+    } else if (difficulty === 'hard') {
+        // Zor: Orta %30'luk engagement aralığındaki tweetler
+        // Engagement ortalamasına yakın olanlar
+        const startIndex = Math.floor(tweetsWithEngagement.length * 0.35);
+        const endIndex = Math.ceil(tweetsWithEngagement.length * 0.65);
+        
+        filteredTweets = tweetsWithEngagement
+            .slice(startIndex, endIndex)
+            .map(t => t.tweet);
+            
+    } else {
+        // Orta: Orta %40-60 aralığı ve biraz üst/alt
+        const startIndex = Math.floor(tweetsWithEngagement.length * 0.25);
+        const endIndex = Math.ceil(tweetsWithEngagement.length * 0.75);
+        
+        filteredTweets = tweetsWithEngagement
+            .slice(startIndex, endIndex)
+            .map(t => t.tweet);
+    }
+    
+    // Filtre sonucu boşsa, tüm tweetleri kullan
+    return filteredTweets.length > 0 ? filteredTweets : allTweets;
+}
+
+function getRandomUnusedTweet() {
+    const availableTweets = getDifficultyFilter();
+    
+    if (availableTweets.length === 0) {
+        usedTweets.clear();
+        return getDifficultyFilter()[0] || tweetPool[0];
+    }
+    
+    const randomIndex = Math.floor(Math.random() * availableTweets.length);
+    const tweet = availableTweets[randomIndex];
+    const poolIndex = tweetPool.indexOf(tweet);
+    usedTweets.add(poolIndex);
+    
+    return tweet;
+}
+
+// Tweet'i DOM'a yazdır
+function renderTweet(tweet, isTop = false) {
+    const prefix = isTop ? 'top' : 'bottom';
+    
+    // İçeriği sadece değiştir, animasyonu bozmamak için opacity kontrolü yapma
+    const nameEl = document.getElementById(`${prefix}TweetName`);
+    const usernameEl = document.getElementById(`${prefix}TweetUsername`);
+    const textEl = document.getElementById(`${prefix}TweetText`);
+    const avatarEl = document.getElementById(`${prefix}TweetAvatar`);
+    
+    if (nameEl) nameEl.textContent = tweet.name;
+    if (usernameEl) usernameEl.textContent = tweet.username;
+    if (textEl) textEl.textContent = tweet.text;
+    if (avatarEl) avatarEl.style.backgroundImage = `url("${tweet.avatar}")`;
+    
+    if (isTop) {
+        // Üst tweet için istatistikleri göster
+        const likesEl = document.getElementById(`${prefix}TweetLikes`);
+        const retweetsEl = document.getElementById(`${prefix}TweetRetweets`);
+        const viewsEl = document.getElementById(`${prefix}TweetViews`);
+        
+        if (likesEl) likesEl.textContent = formatNumber(tweet.likes);
+        if (retweetsEl) retweetsEl.textContent = formatNumber(tweet.retweets);
+        if (viewsEl) viewsEl.textContent = formatNumber(tweet.views);
+    } else {
+        // Alt tweet için istatistikleri gizle (hepsi ???)
+        const likesEl = document.getElementById(`${prefix}TweetLikes`);
+        const retweetsEl = document.getElementById(`${prefix}TweetRetweets`);
+        const viewsEl = document.getElementById(`${prefix}TweetViews`);
+        
+        if (likesEl) likesEl.textContent = '???';
+        if (retweetsEl) retweetsEl.textContent = '???';
+        if (viewsEl) viewsEl.textContent = '???';
+    }
+}
+
+// Aktif istatistiği vurgula
+function highlightActiveStat() {
+    // Tüm istatistikleri normal renge ve boyuta döndür
+    const containers = ['bottomTweetLikesContainer', 'bottomTweetRetweetsContainer', 'bottomTweetViewsContainer'];
+    containers.forEach((id, index) => {
+        const container = document.getElementById(id);
+        if (container) {
+            const icon = container.querySelector('.material-symbols-outlined');
+            const text = container.querySelector('span:not(.material-symbols-outlined)');
+            if (icon) icon.className = 'material-symbols-outlined text-lg text-text-light-secondary dark:text-text-dark-secondary';
+            if (text) {
+                // Bilinen istatistikler küçük gösterilsin
+                if (statsGuessed[index]) {
+                    text.className = 'text-sm font-semibold text-text-light-secondary dark:text-text-dark-secondary';
+                } else {
+                    // Bilinmeyen tüm istatistikler aynı boyutta
+                    text.className = 'text-lg font-bold text-text-light-secondary dark:text-text-dark-secondary';
+                }
+            }
+            // Container'ı normal boyutta yap
+            container.style.transform = 'scale(1)';
+            container.style.transition = 'transform 0.3s ease-out';
+        }
+    });
+    
+    // Aktif istatistiği mavi yap ve biraz büyüt
+    if (!statsGuessed[currentStatIndex]) {
+        const activeContainer = document.getElementById(containers[currentStatIndex]);
+        if (activeContainer) {
+            const icon = activeContainer.querySelector('.material-symbols-outlined');
+            const text = activeContainer.querySelector('span:not(.material-symbols-outlined)');
+            if (icon) icon.className = 'material-symbols-outlined text-xl text-primary';
+            if (text) {
+                text.className = 'text-xl font-bold text-primary';
+            }
+            // Container'ı biraz büyüt (tüm istatistikler için aynı)
+            activeContainer.style.transform = 'scale(1.15)';
+            activeContainer.style.transition = 'transform 0.3s ease-out';
+        }
+    }
+}
+
+// Kart yüksekliklerini eşitle ve main container yüksekliğini sabitle
+function equalizeCardHeights() {
+    const topCard = document.getElementById('topTweetCard');
+    const bottomCard = document.getElementById('bottomTweetCard');
+    const mainContainer = document.querySelector('main');
+    
+    // İki kartın yüksekliğini al
+    const topHeight = topCard.getBoundingClientRect().height;
+    const bottomHeight = bottomCard.getBoundingClientRect().height;
+    
+    // Daha yüksek olanı bul ve her ikisine de uygula
+    const maxHeight = Math.max(topHeight, bottomHeight);
+    
+    topCard.style.height = maxHeight + 'px';
+    bottomCard.style.height = maxHeight + 'px';
+    
+    // Main container'ın yüksekliğini sabitle (iki kart + VS + gap'ler)
+    if (mainContainer) {
+        const gap = 16; // gap-4 = 1rem = 16px
+        const vsElement = document.querySelector('.flex.justify-center.flex-shrink-0');
+        const vsHeight = vsElement ? vsElement.getBoundingClientRect().height : 64;
+        
+        // İki kart + VS + gap'ler
+        const totalHeight = (maxHeight * 2) + vsHeight + (gap * 3); // gap üst, gap alt, gap VS ile kart arası
+        mainContainer.style.minHeight = totalHeight + 'px';
+    }
+}
+
+// JSON'dan tweet pool'u yükle
+async function loadTweetPool() {
+    try {
+        const response = await fetch('tweets_pool.json');
+        if (response.ok) {
+            const data = await response.json();
+            console.log(`✓ ${data.length} tweet JSON'dan yüklendi`);
+            return data;
+        }
+    } catch (error) {
+        console.log('Tweet pool JSON bulunamadı, varsayılan kullanılıyor:', error);
+    }
+    return null;
+}
+
+// Oyunu başlat
+async function startGame() {
+    // Oyun durumunu sıfırla
+    score = 0;
+    streak = 0;
+    usedTweets.clear();
+    currentStatIndex = 0;
+    statsGuessed = [false, false, false];
+    
+    // JSON'dan tweet'leri yükle (varsa)
+    const loadedTweets = await loadTweetPool();
+    if (loadedTweets && loadedTweets.length > 0) {
+        // tweetPool'u güncelle
+        tweetPool = loadedTweets;
+        console.log(`✓ ${loadedTweets.length} tweet yüklendi, oyun başlıyor...`);
+    }
+    
+    // Zorluk seviyesine uygun tweetler seç
+    const filteredTweets = getDifficultyFilter();
+    
+    if (filteredTweets.length < 2) {
+        currentTopTweet = filteredTweets[0] || tweetPool[0];
+        currentBottomTweet = filteredTweets[1] || tweetPool[1] || tweetPool[0];
+    } else {
+        // İlk tweet'i seç
+        currentTopTweet = filteredTweets[Math.floor(Math.random() * filteredTweets.length)];
+        
+        // Alt tweet'i, üst tweet ile KARŞIT engagement seviyesinden seç
+        const difficulty = localStorage.getItem('difficulty') || 'medium';
+        const topEngagement = calculateEngagement(currentTopTweet);
+        
+        // Tüm filtered tweetleri engagement'a göre sırala
+        const sortedFiltered = filteredTweets.map(t => ({
+            tweet: t,
+            engagement: calculateEngagement(t)
+        })).sort((a, b) => a.engagement - b.engagement);
+        
+        let bottomTweet;
+        if (difficulty === 'easy') {
+            // Kolay: Üst tweet düşükse yüksek, yüksekse düşük seç
+            const midPoint = sortedFiltered.length / 2;
+            if (topEngagement <= sortedFiltered[midPoint].engagement) {
+                // Üst tweet düşük, alt tweet YÜKSEK seç
+                const highTweets = sortedFiltered.slice(Math.floor(midPoint));
+                bottomTweet = highTweets[Math.floor(Math.random() * highTweets.length)].tweet;
+            } else {
+                // Üst tweet yüksek, alt tweet DÜŞÜK seç
+                const lowTweets = sortedFiltered.slice(0, Math.ceil(midPoint));
+                bottomTweet = lowTweets[Math.floor(Math.random() * lowTweets.length)].tweet;
+            }
+        } else if (difficulty === 'hard') {
+            // Zor: Üst tweet ile BENZER engagement seviyesi seç
+            const targetEngagement = topEngagement;
+            const tolerance = targetEngagement * 0.15; // %15 tolerans
+            
+            const similarTweets = sortedFiltered.filter(t => 
+                t.tweet !== currentTopTweet &&
+                Math.abs(t.engagement - targetEngagement) <= tolerance
+            );
+            
+            if (similarTweets.length > 0) {
+                // En yakın engagement'lı tweet'i seç
+                similarTweets.sort((a, b) => 
+                    Math.abs(a.engagement - targetEngagement) - Math.abs(b.engagement - targetEngagement)
+                );
+                bottomTweet = similarTweets[0].tweet;
+            } else {
+                // Benzer bulunamazsa yakın aralıktan seç
+                const topIndex = sortedFiltered.findIndex(t => t.tweet === currentTopTweet);
+                const nearbyRange = Math.min(10, sortedFiltered.length);
+                const startIdx = Math.max(0, topIndex - nearbyRange);
+                const endIdx = Math.min(sortedFiltered.length, topIndex + nearbyRange);
+                const nearbyTweets = sortedFiltered.slice(startIdx, endIdx)
+                    .filter(t => t.tweet !== currentTopTweet);
+                bottomTweet = nearbyTweets.length > 0
+                    ? nearbyTweets[Math.floor(Math.random() * nearbyTweets.length)].tweet
+                    : filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
+            }
+        } else {
+            // Orta: Rastgele ama farklı tweet seç
+            const differentTweets = sortedFiltered.filter(t => 
+                t.tweet !== currentTopTweet && 
+                t.tweet.likes !== currentTopTweet.likes
+            );
+            if (differentTweets.length > 0) {
+                bottomTweet = differentTweets[Math.floor(Math.random() * differentTweets.length)].tweet;
+            } else {
+                bottomTweet = filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
+            }
+        }
+        
+        currentBottomTweet = bottomTweet;
+    }
+    
+    renderTweet(currentTopTweet, true);
+    renderTweet(currentBottomTweet, false);
+    
+    // İstatistikleri sıfırla
+    currentStatIndex = 0;
+    statsGuessed = [false, false, false];
+    highlightActiveStat();
+    
+    // Kart yüksekliklerini eşitle
+    setTimeout(() => {
+        equalizeCardHeights();
+    }, 100);
+}
+
+// Bir sonraki tweet'e geç (üç istatistik de tahmin edildiğinde)
+function moveToNextTweet() {
+    // Tweet verilerini güncelle
+    currentTopTweet = currentBottomTweet;
+    
+    // Zorluk seviyesine göre alt tweet seç
+    const filteredTweets = getDifficultyFilter();
+    const difficulty = localStorage.getItem('difficulty') || 'medium';
+    const topEngagement = calculateEngagement(currentTopTweet);
+    
+    let bottomTweet;
+    
+    if (filteredTweets.length < 2) {
+        bottomTweet = filteredTweets[0] || tweetPool[0];
+    } else if (difficulty === 'easy') {
+        // Kolay: Karşıt engagement seviyesi seç
+        const sortedFiltered = filteredTweets.map(t => ({
+            tweet: t,
+            engagement: calculateEngagement(t)
+        })).sort((a, b) => a.engagement - b.engagement);
+        
+        const midPoint = sortedFiltered.length / 2;
+        if (topEngagement <= sortedFiltered[Math.floor(midPoint)].engagement) {
+            // Üst tweet düşük, alt tweet YÜKSEK seç
+            const highTweets = sortedFiltered.slice(Math.floor(midPoint));
+            const availableHigh = highTweets.filter(t => 
+                t.tweet !== currentTopTweet && 
+                !usedTweets.has(tweetPool.indexOf(t.tweet))
+            );
+            bottomTweet = availableHigh.length > 0 
+                ? availableHigh[Math.floor(Math.random() * availableHigh.length)].tweet
+                : highTweets[Math.floor(Math.random() * highTweets.length)].tweet;
+        } else {
+            // Üst tweet yüksek, alt tweet DÜŞÜK seç
+            const lowTweets = sortedFiltered.slice(0, Math.ceil(midPoint));
+            const availableLow = lowTweets.filter(t => 
+                t.tweet !== currentTopTweet && 
+                !usedTweets.has(tweetPool.indexOf(t.tweet))
+            );
+            bottomTweet = availableLow.length > 0 
+                ? availableLow[Math.floor(Math.random() * availableLow.length)].tweet
+                : lowTweets[Math.floor(Math.random() * lowTweets.length)].tweet;
+        }
+    } else if (difficulty === 'hard') {
+        // Zor: Üst tweet ile BENZER engagement seviyesi seç
+        const sortedFiltered = filteredTweets.map(t => ({
+            tweet: t,
+            engagement: calculateEngagement(t)
+        })).sort((a, b) => a.engagement - b.engagement);
+        
+        // Üst tweet'in index'ini bul
+        const topIndex = sortedFiltered.findIndex(t => t.tweet === currentTopTweet);
+        if (topIndex === -1) {
+            bottomTweet = filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
+        } else {
+            // Üst tweet'e yakın engagement'lı tweetler seç (±%10 civarı)
+            const targetEngagement = sortedFiltered[topIndex].engagement;
+            const tolerance = targetEngagement * 0.15; // %15 tolerans
+            
+            const similarTweets = sortedFiltered.filter(t => 
+                t.tweet !== currentTopTweet &&
+                Math.abs(t.engagement - targetEngagement) <= tolerance &&
+                !usedTweets.has(tweetPool.indexOf(t.tweet))
+            );
+            
+            if (similarTweets.length > 0) {
+                // En yakın engagement'lı tweet'i seç
+                similarTweets.sort((a, b) => 
+                    Math.abs(a.engagement - targetEngagement) - Math.abs(b.engagement - targetEngagement)
+                );
+                bottomTweet = similarTweets[0].tweet;
+            } else {
+                // Benzer bulunamazsa yakın aralıktan seç
+                const nearbyRange = Math.min(10, sortedFiltered.length);
+                const startIdx = Math.max(0, topIndex - nearbyRange);
+                const endIdx = Math.min(sortedFiltered.length, topIndex + nearbyRange);
+                const nearbyTweets = sortedFiltered.slice(startIdx, endIdx)
+                    .filter(t => t.tweet !== currentTopTweet);
+                bottomTweet = nearbyTweets.length > 0
+                    ? nearbyTweets[Math.floor(Math.random() * nearbyTweets.length)].tweet
+                    : filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
+            }
+        }
+    } else {
+        // Orta: Rastgele ama farklı tweet seç
+        const available = filteredTweets.filter(t => 
+            t !== currentTopTweet && 
+            t.likes !== currentTopTweet.likes
+        );
+        bottomTweet = available.length > 0
+            ? available[Math.floor(Math.random() * available.length)]
+            : filteredTweets[Math.floor(Math.random() * filteredTweets.length)];
+    }
+    
+    currentBottomTweet = bottomTweet;
+    const poolIndex = tweetPool.indexOf(currentBottomTweet);
+    usedTweets.add(poolIndex);
+    
+    // Kısa bir gecikme sonrası animasyonlu geçiş başlat
+    setTimeout(() => {
+        const topCard = document.getElementById('topTweetCard');
+        const bottomCard = document.getElementById('bottomTweetCard');
+        const mainContainer = document.querySelector('main');
+        
+        // Main container yüksekliğini ÖNCE sabitle (alt kart absolute olmadan önce)
+        const vsElement = document.querySelector('.flex.justify-center.flex-shrink-0');
+        const vsHeight = vsElement ? vsElement.offsetHeight : 64;
+        const gap = 16; // gap-4 = 1rem = 16px
+        
+        // Şu anki kart yüksekliklerini al
+        const currentTopCardHeight = topCard.getBoundingClientRect().height;
+        const currentBottomCardHeight = bottomCard.getBoundingClientRect().height;
+        const maxCardHeight = Math.max(currentTopCardHeight, currentBottomCardHeight);
+        const totalMainHeight = (maxCardHeight * 2) + vsHeight + (gap * 3);
+        
+        // Main container'a min-height ver (alt kart absolute olmadan önce)
+        if (mainContainer) {
+            mainContainer.style.minHeight = totalMainHeight + 'px';
+        }
+        
+        // Alt tweet yukarı kayarken, üst tweet'i şimdiden güncelle (ama görünmez olsun)
+        // Böylece animasyon tamamlandığında yeniden yükleniyormuş gibi görünmez
+        topCard.style.opacity = '0';
+        
+        // Üst tweet'in yüksekliğini sabitle (flex-1 sayesinde genişlemesin)
+        const topCardHeight = topCard.getBoundingClientRect().height;
+        topCard.style.height = topCardHeight + 'px';
+        topCard.style.flex = 'none';
+        topCard.style.minHeight = '0';
+        
+        renderTweet(currentTopTweet, true);
+        
+        // Üst tweet'i yukarı kaydır ve gizle (içeriği zaten güncellenmiş)
+        topCard.classList.add('slide-up');
+        
+        // Alt tweet'in yüksekliğini sabitle (flex-1 sayesinde genişlemesin)
+        const bottomCardHeight = bottomCard.getBoundingClientRect().height;
+        bottomCard.style.height = bottomCardHeight + 'px';
+        bottomCard.style.flex = 'none';
+        bottomCard.style.minHeight = '0';
+        
+        // Alt tweet'i yukarı kaydır (üst tweet'in yerine geçsin)
+        // Üst tweet'in ve VS alanının toplam yüksekliği kadar yukarı
+        const topCardRect = topCard.getBoundingClientRect();
+        const marginBottom = 16; // mb-4 = 1rem = 16px
+        // Toplam: üst tweet yüksekliği + margin bottom + VS alanı yüksekliği + margin
+        const extraOffset = 0; // Offset kaldırıldı - fazla yukarı kaymıyor
+        const totalOffset = topCardRect.height + marginBottom + vsHeight + marginBottom + extraOffset;
+        bottomCard.style.transform = `translateY(-${totalOffset}px)`;
+        
+        // Animasyon tamamlandığında
+        setTimeout(() => {
+            // Üst tweet'i anında görünür yap (transition olmadan, içeriği zaten güncellenmiş)
+            topCard.style.transition = 'none';
+            topCard.classList.remove('slide-up');
+            topCard.style.transform = '';
+            topCard.style.opacity = '1';
+            topCard.style.height = '';
+            topCard.style.flex = '';
+            topCard.style.minHeight = '';
+            
+            // Transition'ı tekrar aktif et (bir sonraki animasyon için)
+            setTimeout(() => {
+                topCard.style.transition = '';
+            }, 50);
+            
+            // Alt tweet'in içeriğini şimdi güncelle (ama opacity 0'da olsun, alttan gelirken görünecek)
+            renderTweet(currentBottomTweet, false);
+            
+            // İstatistikleri sıfırla
+            currentStatIndex = 0;
+            statsGuessed = [false, false, false];
+            // highlightActiveStat() animasyon bitince yapılacak
+            
+            // Alt tweet'i şimdiden görünmez yap (alttan gelirken fade-in olacak)
+            bottomCard.style.opacity = '0';
+            
+            // Alt tweet'in hedef pozisyonunu hesapla (normal flow'daki pozisyonu)
+            // Önce üst tweet'in yüksekliğini güncelle
+            topCard.style.height = '';
+            const mainRect = mainContainer.getBoundingClientRect();
+            const vsRect = vsElement ? vsElement.getBoundingClientRect() : null;
+            
+            // Main container yüksekliği zaten sabit (üstte ayarlandı), tekrar güncelle
+            const topCardHeightValue2 = topCard.getBoundingClientRect().height;
+            const bottomCardHeightValue = bottomCard.getBoundingClientRect().height;
+            const maxCardHeightValue = Math.max(topCardHeightValue2, bottomCardHeightValue);
+            const totalMainHeightUpdated = (maxCardHeightValue * 2) + vsHeight + (gap * 3);
+            mainContainer.style.minHeight = totalMainHeightUpdated + 'px';
+            
+            // Biraz bekle ki DOM güncellensin
+            setTimeout(() => {
+                const updatedTopCardRect = topCard.getBoundingClientRect();
+                
+                // Normal pozisyonda olması gereken yeri hesapla
+                // Alt tweet, üst tweet'in altı + gap + VS + gap konumunda olmalı
+                const mainContainerPadding = 24; // py-6 = 1.5rem = 24px
+                const topCardBottom = updatedTopCardRect.height + mainContainerPadding; // üst tweet + padding
+                const normalPositionTop = topCardBottom + gap + vsHeight + gap; // gap + VS + gap
+                
+                // Alt tweet'in yüksekliğini önce sabit tut (şu anki yüksekliği)
+                const currentBottomHeight = bottomCard.getBoundingClientRect().height;
+                
+                // Alt tweet absolute olmadan önce, onun yerine placeholder ekle
+                const placeholder = document.createElement('div');
+                placeholder.id = 'bottomCardPlaceholder';
+                placeholder.style.height = currentBottomHeight + 'px';
+                placeholder.style.flex = 'none';
+                placeholder.style.minHeight = '0';
+                placeholder.style.width = '100%';
+                placeholder.style.pointerEvents = 'none';
+                placeholder.style.visibility = 'hidden';
+                
+                // Placeholder'ı alt tweet'in yerine ekle
+                bottomCard.parentNode.insertBefore(placeholder, bottomCard.nextSibling);
+                
+                // Alt tweet'i absolute ile sayfanın en altına (ekran dışına) yerleştir
+                bottomCard.style.transition = 'none'; // Önce transition'ı kapat
+                bottomCard.style.position = 'absolute';
+                bottomCard.style.top = normalPositionTop + 'px';
+                bottomCard.style.left = '1rem';
+                bottomCard.style.width = `calc(100% - 2rem)`;
+                bottomCard.style.height = currentBottomHeight + 'px'; // Yüksekliği sabitle
+                bottomCard.style.transform = 'translateY(100vh)'; // Ekranın altına kaydır (görünmez)
+                bottomCard.style.opacity = '0';
+                bottomCard.style.zIndex = '5';
+                
+                // Kısa bir gecikme sonra smooth animasyonla yukarı kaydır
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        // Transition'ı aktif et ve smooth animasyon başlat (diğerleriyle aynı hız)
+                        bottomCard.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                        bottomCard.style.transform = 'translateY(0)'; // Normal pozisyonuna gel
+                        bottomCard.style.opacity = '1'; // Görünür ol
+                        
+                         // Animasyon tamamlandığında normal pozisyona döndür
+                         setTimeout(() => {
+                             // Placeholder'ı kaldır
+                             const placeholder = document.getElementById('bottomCardPlaceholder');
+                             if (placeholder) {
+                                 placeholder.remove();
+                             }
+                             
+                             bottomCard.style.transition = 'none';
+                             bottomCard.style.position = 'relative';
+                             bottomCard.style.top = '';
+                             bottomCard.style.left = '';
+                             bottomCard.style.width = '';
+                             bottomCard.style.height = '';
+                             bottomCard.style.flex = '';
+                             bottomCard.style.minHeight = '';
+                             bottomCard.style.transform = '';
+                             bottomCard.style.opacity = '';
+                             bottomCard.style.zIndex = '';
+                             
+                             // İstatistikleri vurgula (içerik zaten güncellendi)
+                             highlightActiveStat();
+                             
+                             // Yüksekliği sıfırla (equalizeCardHeights ile tekrar ayarlanacak)
+                             topCard.style.height = '';
+                             const mainContainer = document.querySelector('main');
+                             if (mainContainer) {
+                                 mainContainer.style.minHeight = '';
+                             }
+                             
+                             // Kart yüksekliklerini eşitle
+                             setTimeout(() => {
+                                 equalizeCardHeights();
+                                 
+                                 // Transition'ı tekrar aktif et
+                                 setTimeout(() => {
+                                     bottomCard.style.transition = '';
+                                 }, 50);
+                                 
+                                 // Butonları tekrar aktif et
+                                 document.getElementById('higherButton').disabled = false;
+                                 document.getElementById('lowerButton').disabled = false;
+                             }, 100);
+                         }, 850);
+                    }, 50);
+                });
+            }, 50);
+        }, 600); // Animasyon süresi kadar bekle
+    }, 800);
+}
+
+// Tahmin kontrolü
+function checkGuess(isHigher) {
+    // Butonları devre dışı bırak (çift tıklamayı önle)
+    document.getElementById('higherButton').disabled = true;
+    document.getElementById('lowerButton').disabled = true;
+    
+    // Aktif istatistiği al
+    const currentStat = statTypes[currentStatIndex];
+    const topValue = currentTopTweet[currentStat];
+    const bottomValue = currentBottomTweet[currentStat];
+    
+    // Eşitlik durumu da yanlış sayılır
+    const isCorrect = isHigher 
+        ? bottomValue > topValue 
+        : bottomValue < topValue;
+    
+    if (isCorrect) {
+        // Doğru tahmin
+        streak++; // Streak artır
+        const streakBonus = getStreakBonus();
+        
+        score++;
+        if (streakBonus > 0) {
+            score += streakBonus; // Streak bonusu ekle
+        }
+        
+        statsGuessed[currentStatIndex] = true;
+        
+        // İstatistiği göster
+        const statIds = {
+            'likes': 'bottomTweetLikes',
+            'retweets': 'bottomTweetRetweets',
+            'views': 'bottomTweetViews'
+        };
+        const statEl = document.getElementById(statIds[currentStat]);
+        if (statEl) {
+            statEl.textContent = formatNumber(bottomValue);
+        }
+        
+        // Üç istatistik de tahmin edildi mi kontrol et
+        if (statsGuessed.every(guessed => guessed)) {
+            // Combo bonusu!
+            score += 2; // Ekstra 2 puan
+            updateScoreDisplay();
+            updateHighScore(score);
+            
+            // Başarı animasyonu: Yeşil overlay hemen göster (son istatistik açıldığı anda)
+            const overlay = document.createElement('div');
+            overlay.id = 'successOverlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.backgroundColor = '#34d399'; // Daha açık yeşil
+            overlay.style.opacity = '0';
+            overlay.style.zIndex = '9999';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.transition = 'opacity 0.3s ease-out';
+            document.body.appendChild(overlay);
+            
+            // Yeşil animasyonu hemen göster
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '0.4'; // Daha açık
+            });
+            
+            // Yeşil animasyon bittikten hemen sonra kartı yukarı kaydır
+            setTimeout(() => {
+                // Yeşil animasyon bittikten hemen sonra kart animasyonunu başlat
+                moveToNextTweet();
+                
+                // Overlay'i kaldır
+                overlay.style.transition = 'opacity 0.3s ease-out';
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    if (overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                }, 300);
+            }, 500);
+        } else {
+            // Bir sonraki istatistiğe geç
+            updateScoreDisplay();
+            currentStatIndex = statsGuessed.findIndex(guessed => !guessed);
+            highlightActiveStat();
+            
+            // Butonları tekrar aktif et
+            document.getElementById('higherButton').disabled = false;
+            document.getElementById('lowerButton').disabled = false;
+        }
+    } else {
+        // Yanlış tahmin - Streak sıfırla
+        streak = 0;
+        
+        // Yanlış tahmin - Başarısızlık animasyonu: Kırmızı overlay göster
+        const overlay = document.createElement('div');
+        overlay.id = 'failOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = '#ef4444'; // Kırmızı renk
+        overlay.style.opacity = '0';
+        overlay.style.zIndex = '9999';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.transition = 'opacity 0.3s ease-out';
+        document.body.appendChild(overlay);
+        
+        // Kırmızı animasyonu hemen göster
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '0.4'; // Aynı görünürlük
+        });
+        
+        // Tüm istatistikleri göster
+        document.getElementById('bottomTweetLikes').textContent = formatNumber(currentBottomTweet.likes);
+        document.getElementById('bottomTweetRetweets').textContent = formatNumber(currentBottomTweet.retweets);
+        document.getElementById('bottomTweetViews').textContent = formatNumber(currentBottomTweet.views);
+        
+        // Animasyonu kaldır ve hemen ardından game over'a yönlendir
+        setTimeout(() => {
+            overlay.style.transition = 'opacity 0.5s ease-out';
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+                
+                // Kırmızı animasyon bittikten hemen sonra game over'a yönlendir
+                localStorage.setItem('tweetBattleScore', score.toString());
+                updateHighScore(score); // En yüksek skoru kontrol et
+                window.location.href = `gameover.html?score=${score}`;
+            }, 500);
+        }, 500);
+    }
+}
+
+// Buton event listener'ları
+document.getElementById('higherButton').addEventListener('click', () => checkGuess(true));
+document.getElementById('lowerButton').addEventListener('click', () => checkGuess(false));
+
+// Oyunu başlat
+// Sayfa yüklendiğinde çevirileri uygula
+updateTexts();
+updateScoreDisplay(); // En yüksek skoru göster
+
+startGame();
+
+// Geri dönüş butonu
+document.getElementById('backButton').addEventListener('click', () => {
+    const confirmMsg = currentLanguage === 'tr' 
+        ? 'Oyunu terk etmek istediğinize emin misiniz? İlerlemeniz kaybolacak.'
+        : 'Are you sure you want to leave? Your progress will be lost.';
+    if (confirm(confirmMsg)) {
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 150);
+    }
+});
+</script>
+
+</body></html>
+

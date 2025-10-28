@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Over - Tweet Battle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="translations.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3eaef4",
+              "background-light": "#f5f7f8",
+              "background-dark": "#101b22",
+              "text-light-primary": "#0d161c",
+              "text-light-secondary": "#64748b",
+              "text-dark-primary": "#f1f5f9",
+              "text-dark-secondary": "#94a3b8",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            min-height: max(884px, 100dvh);
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+    <style>
+        body {
+            animation: fadeIn 0.15s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-out {
+            animation: fadeOut 0.15s ease-in forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="font-display overflow-hidden">
+<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<!-- Top App Bar -->
+<div class="flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
+<span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="swords">
+    swords
+</span>
+<h1 class="text-[#0d161c] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight">Tweet Battle</h1>
+</div>
+
+<!-- Game Over Content -->
+<div class="flex flex-col items-center justify-center flex-1 px-4 py-8 overflow-hidden">
+<div class="flex flex-col items-center gap-8 w-full max-w-md">
+<!-- Game Over Icon -->
+<div class="w-24 h-24 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-5xl text-red-500 dark:text-red-400">
+    sentiment_dissatisfied
+</span>
+</div>
+
+<!-- Game Over Title -->
+<h2 id="gameOverTitle" class="text-[#0d161c] dark:text-white text-3xl font-extrabold leading-tight tracking-tight text-center">Oyun Bitti</h2>
+
+<!-- Score Display -->
+<div class="flex flex-col items-center gap-3 bg-white dark:bg-background-dark rounded-xl shadow-md p-8 w-full">
+<p id="finalScoreLabel" class="text-text-light-secondary dark:text-text-dark-secondary text-base font-semibold">Final Skorunuz</p>
+<p class="text-primary text-6xl font-extrabold leading-tight tracking-tight"><span id="finalScore">0</span></p>
+<p id="highScoreLabel" class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-semibold mt-2">En Yüksek Skor</p>
+<p class="text-primary/80 text-2xl font-bold"><span id="highScoreDisplay">0</span></p>
+</div>
+
+<!-- Difficulty Selection -->
+<div class="mt-4 w-full max-w-md flex flex-col items-center">
+<p id="selectDifficulty" class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-semibold mb-3 text-center">Zorluk Seviyesi</p>
+<button id="difficultyToggle" class="difficulty-toggle flex items-center justify-center gap-2 rounded-full h-12 px-8 bg-white dark:bg-background-dark shadow-sm hover:shadow-md transition-all cursor-pointer border-2 border-primary w-full max-w-xs">
+<span class="material-symbols-outlined text-lg" id="difficultyIcon">trending_flat</span>
+<span class="text-base font-semibold text-text-light-primary dark:text-text-dark-primary" id="difficultyText">Orta</span>
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- Play Again Button -->
+<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+<div class="flex flex-1 gap-4 justify-between">
+<button id="playAgainButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
+<span class="truncate">Tekrar Oyna</span>
+</button>
+</div>
+</footer>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Çevirileri uygula
+        updateTexts();
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        let score = urlParams.get('score');
+        if (!score) {
+            score = localStorage.getItem('tweetBattleScore') || '0';
+        }
+        document.getElementById('finalScore').textContent = score;
+        
+        // En yüksek skoru göster
+        const highScore = parseInt(localStorage.getItem('tweetBattleHighScore') || '0');
+        document.getElementById('highScoreDisplay').textContent = highScore;
+        
+        // Zorluk seçimi (varsayılan: son seçilen veya medium)
+        let selectedDifficulty = localStorage.getItem('difficulty') || 'medium';
+        
+        // Zorluk butonunu güncelle
+        function updateDifficultyButton() {
+            const difficultyIcon = document.getElementById('difficultyIcon');
+            const difficultyText = document.getElementById('difficultyText');
+            
+            if (selectedDifficulty === 'easy') {
+                difficultyIcon.textContent = 'trending_down';
+                difficultyText.textContent = getTranslation('welcome.easy');
+            } else if (selectedDifficulty === 'hard') {
+                difficultyIcon.textContent = 'trending_up';
+                difficultyText.textContent = getTranslation('welcome.hard');
+            } else {
+                difficultyIcon.textContent = 'trending_flat';
+                difficultyText.textContent = getTranslation('welcome.medium');
+            }
+        }
+        
+        // Başlangıçta güncelle
+        updateDifficultyButton();
+        
+        // Zorluk toggle butonu
+        document.getElementById('difficultyToggle').addEventListener('click', function() {
+            // Zorluk döngüsü: easy -> medium -> hard -> easy
+            if (selectedDifficulty === 'easy') {
+                selectedDifficulty = 'medium';
+            } else if (selectedDifficulty === 'medium') {
+                selectedDifficulty = 'hard';
+            } else {
+                selectedDifficulty = 'easy';
+            }
+            
+            localStorage.setItem('difficulty', selectedDifficulty);
+            updateDifficultyButton();
+        });
+        
+        document.getElementById('playAgainButton').addEventListener('click', () => {
+            localStorage.setItem('difficulty', selectedDifficulty);
+            localStorage.removeItem('tweetBattleScore');
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = 'game.html';
+            }, 150);
+        });
+    });
+</script>
+</body>
+</html>
