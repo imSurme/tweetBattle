@@ -45,7 +45,7 @@
         }
         .tweet-card {
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
-            min-height: 200px;
+            height: 36vh; /* sabit kart yüksekliği */
             overflow: hidden;
         }
         .tweet-content-scrollable {
@@ -143,7 +143,7 @@
 </span>
 <h1 class="text-[#0d161c] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight">Tweet Battle</h1>
 </div>
-<main class="relative flex flex-col flex-1 px-4 py-4 gap-4 min-h-0 overflow-y-auto">
+<main class="relative flex flex-col flex-1 px-4 py-4 gap-3 min-h-0 overflow-y-auto">
 <!-- First Tweet Card (Visible Stats) -->
 <div id="topTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 auto;">
 <div class="tweet-content-scrollable px-4 pt-2">
@@ -158,7 +158,7 @@
 </div>
 </div>
 </div>
-<div class="flex items-center justify-center gap-6 text-text-light-secondary dark:text-text-dark-secondary px-4 py-2 flex-shrink-0">
+<div class="flex items-center justify-center gap-6 text-text-light-secondary dark:text-text-dark-secondary px-4 py-1 flex-shrink-0">
 <div class="flex items-center gap-1">
 <span class="material-symbols-outlined text-lg">favorite</span>
 <span class="text-sm font-semibold" id="topTweetLikes">15.2K</span>
@@ -174,7 +174,7 @@
 </div>
 </div>
 <div class="flex justify-center flex-shrink-0">
-<div class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
+<div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm">
 <span class="font-bold text-lg text-text-light-secondary dark:text-text-dark-secondary">VS</span>
 </div>
 </div>
@@ -192,7 +192,7 @@
 </div>
 </div>
 </div>
-<div class="flex items-center justify-center gap-6 text-text-light-secondary dark:text-text-dark-secondary px-4 py-2 flex-shrink-0" id="bottomTweetStatsContainer">
+<div class="flex items-center justify-center gap-6 text-text-light-secondary dark:text-text-dark-secondary px-4 py-1 flex-shrink-0" id="bottomTweetStatsContainer">
 <div class="flex items-center gap-1 transition-colors" id="bottomTweetLikesContainer">
 <span class="material-symbols-outlined text-lg">favorite</span>
 <span class="text-lg font-bold" id="bottomTweetLikes">???</span>
@@ -961,8 +961,7 @@ function moveToNextTweet() {
         topCard.classList.add('slide-up');
         
         // Alt tweet'in yüksekliğini sabitle (flex-1 sayesinde genişlemesin)
-        const bottomCardHeight = bottomCard.getBoundingClientRect().height;
-        bottomCard.style.height = bottomCardHeight + 'px';
+        bottomCard.style.height = fixedHeight + 'px';
         bottomCard.style.flex = 'none';
         bottomCard.style.minHeight = '0';
         
@@ -1012,10 +1011,8 @@ function moveToNextTweet() {
             const vsRect = vsElement ? vsElement.getBoundingClientRect() : null;
             
             // Main container yüksekliği zaten sabit (üstte ayarlandı), tekrar güncelle
-            const topCardHeightValue2 = topCard.getBoundingClientRect().height;
-            const bottomCardHeightValue = bottomCard.getBoundingClientRect().height;
-            const maxCardHeightValue = Math.max(topCardHeightValue2, bottomCardHeightValue);
-            const totalMainHeightUpdated = (maxCardHeightValue * 2) + vsHeight + (gap * 3);
+            const fixedHeight2 = Math.round(window.innerHeight * 0.36);
+            const totalMainHeightUpdated = (fixedHeight2 * 2) + vsHeight + (gap * 3);
             mainContainer.style.minHeight = totalMainHeightUpdated + 'px';
             
             // Biraz bekle ki DOM güncellensin
@@ -1029,7 +1026,7 @@ function moveToNextTweet() {
                 const normalPositionTop = topCardBottom + gap + vsHeight + gap; // gap + VS + gap
                 
                 // Alt tweet'in yüksekliğini önce sabit tut (şu anki yüksekliği)
-                const currentBottomHeight = bottomCard.getBoundingClientRect().height;
+                const currentBottomHeight = Math.round(window.innerHeight * 0.36);
                 
                 // Alt tweet absolute olmadan önce, onun yerine placeholder ekle
                 const placeholder = document.createElement('div');
@@ -1050,7 +1047,7 @@ function moveToNextTweet() {
                 bottomCard.style.top = normalPositionTop + 'px';
                 bottomCard.style.left = '1rem';
                 bottomCard.style.width = `calc(100% - 2rem)`;
-                bottomCard.style.height = currentBottomHeight + 'px'; // Yüksekliği sabitle
+                bottomCard.style.height = currentBottomHeight + 'px'; // Yüksekliği sabit tut
                 bottomCard.style.transform = 'translateY(100vh)'; // Ekranın altına kaydır (görünmez)
                 bottomCard.style.opacity = '0';
                 bottomCard.style.zIndex = '5';
