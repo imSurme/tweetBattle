@@ -105,9 +105,25 @@
             background: rgba(0, 0, 0, 0.3);
         }
     </style>
-<style>
+  <style>
     body {
       min-height: max(884px, 100dvh);
+      height: 100dvh;
+      overflow: hidden;
+    }
+    /* Mobil safe area desteği */
+    @supports (height: 100dvh) {
+      html, body {
+        height: 100dvh;
+        min-height: 100dvh;
+      }
+    }
+    /* Fallback for older browsers */
+    @supports not (height: 100dvh) {
+      html, body {
+        height: 100vh;
+        min-height: 100vh;
+      }
     }
   </style>
   <style>
@@ -128,7 +144,7 @@
   </style>
   </head>
 <body class="font-display overflow-hidden">
-<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<div class="relative flex w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; height: 100dvh; min-height: 100dvh; max-height: 100dvh;'>
 <!-- Top App Bar -->
 <div class="relative flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
 <!-- Back Button -->
@@ -216,7 +232,7 @@
 <h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
 </div>
 <!-- Action Buttons -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+<footer class="sticky bottom-0 p-4 pb-safe bg-transparent backdrop-blur-sm" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="lowerButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary/20 dark:bg-primary/30 text-primary text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
 <span class="material-symbols-outlined">arrow_downward</span>
