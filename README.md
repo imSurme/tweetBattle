@@ -2,7 +2,7 @@
 
 A game to predict tweet engagement! Which tweet got more likes, retweets, and views?
 
-> **🇬🇧 English** | **🇹🇷 [Türkçe](README.tr.md)**
+> **EN** | **[TR](README.tr.md)**
 
 ## 🎮 How to Play
 

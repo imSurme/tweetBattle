@@ -2,7 +2,7 @@
 
 Tweet etkileşimlerini tahmin etme oyunu! Hangi tweet daha çok beğeni, retweet ve görüntülenme aldı?
 
-> **🇬🇧 [English](README.md)** | **🇹🇷 Türkçe**
+> **[EN](README.md)** | **TR**
 
 ## 🎮 Nasıl Oynanır?
 
