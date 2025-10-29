@@ -67,7 +67,7 @@
   </style>
   </head>
 <body class="font-display overflow-hidden">
-<div class="relative flex h-screen w-full flex-col group/design-root overflow-x-hidden bg-gradient-to-b from-primary/10 via-background-light to-background-light dark:from-primary/10 dark:via-background-dark dark:to-background-dark text-[#0d161c] dark:text-background-light">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden bg-gradient-to-b from-primary/10 via-background-light to-background-light dark:from-primary/10 dark:via-background-dark dark:to-background-dark text-[#0d161c] dark:text-background-light" style="min-height: 100vh; min-height: 100dvh;">
 <!-- Language Toggle Button -->
 <button id="languageToggle" class="absolute top-4 right-4 flex items-center justify-center min-w-[48px] h-10 rounded-full bg-white dark:bg-background-dark shadow-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer z-10 px-3">
 <span id="languageText" class="text-sm font-bold text-text-light-primary dark:text-text-dark-primary">TR</span>
@@ -103,7 +103,7 @@
 <div class="flex-grow"></div>
 </main>
 <!-- Start Button -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+    <footer class="sticky bottom-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-transparent backdrop-blur-sm">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="startButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
 <span class="truncate">Başla</span>

@@ -62,7 +62,7 @@
     </style>
 </head>
 <body class="font-display overflow-hidden">
-<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<div class="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; min-height: 100vh; min-height: 100dvh;'>
 <!-- Top App Bar -->
 <div class="flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
 <span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="swords">
@@ -105,7 +105,7 @@
 </div>
 
 <!-- Play Again Button -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+    <footer class="sticky bottom-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-transparent backdrop-blur-sm">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="playAgainButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
 <span class="truncate">Tekrar Oyna</span>

@@ -105,25 +105,9 @@
             background: rgba(0, 0, 0, 0.3);
         }
     </style>
-  <style>
+<style>
     body {
       min-height: max(884px, 100dvh);
-      height: 100dvh;
-      overflow: hidden;
-    }
-    /* Mobil safe area desteği */
-    @supports (height: 100dvh) {
-      html, body {
-        height: 100dvh;
-        min-height: 100dvh;
-      }
-    }
-    /* Fallback for older browsers */
-    @supports not (height: 100dvh) {
-      html, body {
-        height: 100vh;
-        min-height: 100vh;
-      }
     }
   </style>
   <style>
@@ -144,9 +128,9 @@
   </style>
   </head>
 <body class="font-display overflow-hidden">
-<div id="appContainer" class="relative flex w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<div class="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; min-height: 100vh; min-height: 100dvh;'>
 <!-- Top App Bar -->
-<div class="relative flex flex-col items-center p-4 pb-2 justify-center bg-transparent flex-shrink-0">
+<div class="relative flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
 <!-- Back Button -->
 <button id="backButton" class="absolute left-4 top-4 flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-background-dark shadow-sm hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer">
 <span class="material-symbols-outlined text-2xl text-text-light-primary dark:text-text-dark-primary">arrow_back</span>
@@ -157,7 +141,7 @@
 </span>
 <h1 class="text-[#0d161c] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight">Tweet Battle</h1>
 </div>
-<main id="mainContent" class="relative flex flex-col flex-1 px-4 py-6 gap-4 min-h-0" style="flex: 1 1 0%; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+<main class="relative flex flex-col flex-1 px-4 py-6 gap-4 min-h-0 overflow-hidden">
 <!-- First Tweet Card (Visible Stats) -->
 <div id="topTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 0%; min-height: 0;">
 <div class="tweet-content-scrollable px-4 pt-2">
@@ -232,7 +216,7 @@
 <h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
 </div>
 <!-- Action Buttons -->
-<footer class="flex-shrink-0 p-4 bg-transparent backdrop-blur-sm" style="padding-bottom: max(1rem, env(safe-area-inset-bottom)); margin-top: auto;">
+    <footer class="sticky bottom-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-transparent backdrop-blur-sm">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="lowerButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary/20 dark:bg-primary/30 text-primary text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
 <span class="material-symbols-outlined">arrow_downward</span>
@@ -1268,37 +1252,6 @@ function checkGuess(isHigher) {
 // Buton event listener'ları
 document.getElementById('higherButton').addEventListener('click', () => checkGuess(true));
 document.getElementById('lowerButton').addEventListener('click', () => checkGuess(false));
-
-// Mobil viewport ayarları
-function setViewportHeight() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-    
-    const appContainer = document.getElementById('appContainer');
-    const mainContent = document.getElementById('mainContent');
-    const header = document.querySelector('.relative.flex.flex-col.items-center.p-4');
-    const footer = document.querySelector('footer');
-    
-    if (appContainer && header && footer && mainContent) {
-        const headerHeight = header.getBoundingClientRect().height;
-        const footerHeight = footer.getBoundingClientRect().height;
-        const scoreHeight = document.querySelector('.flex.items-center.justify-center.gap-4.px-4.py-3')?.getBoundingClientRect().height || 0;
-        
-        appContainer.style.height = `${window.innerHeight}px`;
-        appContainer.style.maxHeight = `${window.innerHeight}px`;
-        appContainer.style.overflow = 'hidden';
-        
-        const availableHeight = window.innerHeight - headerHeight - footerHeight - scoreHeight;
-        mainContent.style.maxHeight = `${availableHeight}px`;
-    }
-}
-
-// Viewport ayarlarını başlat
-setViewportHeight();
-window.addEventListener('resize', setViewportHeight);
-window.addEventListener('orientationchange', () => {
-    setTimeout(setViewportHeight, 100);
-});
 
 // Oyunu başlat
 // Sayfa yüklendiğinde çevirileri uygula
