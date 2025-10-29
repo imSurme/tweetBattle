@@ -74,13 +74,13 @@
 </div>
 
 <!-- Game Over Content -->
-<div class="flex flex-col items-center justify-center flex-1 px-4 py-8 overflow-y-auto min-h-0" style="padding-bottom: calc(7rem + var(--safe-bottom));">
+<div class="flex flex-col items-center justify-center flex-1 px-4 py-4 overflow-y-auto min-h-0" style="padding-bottom: calc(3.5rem + var(--safe-bottom));">
 <div class="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl">
 <!-- Left Side: Icon and Title -->
 <div class="flex flex-col items-center gap-4 md:w-1/2">
 <!-- Game Over Icon -->
-<div class="w-24 h-24 md:w-32 md:h-32 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shadow-lg">
-<span class="material-symbols-outlined text-5xl md:text-6xl text-red-500 dark:text-red-400">
+<div class="w-20 h-20 md:w-28 md:h-28 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-4xl md:text-5xl text-red-500 dark:text-red-400">
     sentiment_dissatisfied
 </span>
 </div>
@@ -89,7 +89,7 @@
 </div>
 
 <!-- Right Side: Score Display -->
-<div class="flex flex-col items-center gap-3 bg-white dark:bg-background-dark rounded-xl shadow-md p-8 w-full md:w-1/2">
+<div class="flex flex-col items-center gap-3 bg-white dark:bg-background-dark rounded-xl shadow-md p-6 w-full md:w-1/2">
 <p id="finalScoreLabel" class="text-text-light-secondary dark:text-text-dark-secondary text-base font-semibold">Final Skorunuz</p>
 <p class="text-primary text-6xl font-extrabold leading-tight tracking-tight"><span id="finalScore">0</span></p>
 <p id="highScoreLabel" class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-semibold mt-2">En Yüksek Skor</p>
@@ -98,7 +98,7 @@
 </div>
 
 <!-- Difficulty Selection -->
-<div class="mt-8 w-full max-w-4xl flex flex-col items-center">
+<div class="mt-6 w-full max-w-4xl flex flex-col items-center">
 <p id="selectDifficulty" class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-semibold mb-3 text-center">Zorluk Seviyesi</p>
 <button id="difficultyToggle" class="difficulty-toggle flex items-center justify-center gap-2 rounded-full h-12 px-8 bg-white dark:bg-background-dark shadow-sm hover:shadow-md transition-all cursor-pointer border-2 border-primary w-full max-w-xs">
 <span class="material-symbols-outlined text-lg" id="difficultyIcon">trending_flat</span>
@@ -109,7 +109,7 @@
 </div>
 
 <!-- Play Again Button -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm" style="padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);">
+<footer class="sticky bottom-0 p-4 pb-2 bg-transparent backdrop-blur-sm" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="playAgainButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
 <span class="truncate">Tekrar Oyna</span>

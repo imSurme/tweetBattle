@@ -45,7 +45,7 @@
         }
         .tweet-card {
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
-            height: 36vh; /* sabit kart yüksekliği */
+            height: 36svh; /* sabit kart yüksekliği */
             overflow: hidden;
         }
         .tweet-content-scrollable {
@@ -961,7 +961,8 @@ function moveToNextTweet() {
         topCard.classList.add('slide-up');
         
         // Alt tweet'in yüksekliğini sabitle (flex-1 sayesinde genişlemesin)
-        bottomCard.style.height = fixedHeight + 'px';
+        const bottomCardHeight = bottomCard.getBoundingClientRect().height;
+        bottomCard.style.height = bottomCardHeight + 'px';
         bottomCard.style.flex = 'none';
         bottomCard.style.minHeight = '0';
         
@@ -1011,8 +1012,10 @@ function moveToNextTweet() {
             const vsRect = vsElement ? vsElement.getBoundingClientRect() : null;
             
             // Main container yüksekliği zaten sabit (üstte ayarlandı), tekrar güncelle
-            const fixedHeight2 = Math.round(window.innerHeight * 0.36);
-            const totalMainHeightUpdated = (fixedHeight2 * 2) + vsHeight + (gap * 3);
+            const topCardHeightValue2 = topCard.getBoundingClientRect().height;
+            const bottomCardHeightValue = bottomCard.getBoundingClientRect().height;
+            const maxCardHeightValue = Math.max(topCardHeightValue2, bottomCardHeightValue);
+            const totalMainHeightUpdated = (maxCardHeightValue * 2) + vsHeight + (gap * 3);
             mainContainer.style.minHeight = totalMainHeightUpdated + 'px';
             
             // Biraz bekle ki DOM güncellensin
@@ -1026,7 +1029,7 @@ function moveToNextTweet() {
                 const normalPositionTop = topCardBottom + gap + vsHeight + gap; // gap + VS + gap
                 
                 // Alt tweet'in yüksekliğini önce sabit tut (şu anki yüksekliği)
-                const currentBottomHeight = Math.round(window.innerHeight * 0.36);
+                const currentBottomHeight = bottomCard.getBoundingClientRect().height;
                 
                 // Alt tweet absolute olmadan önce, onun yerine placeholder ekle
                 const placeholder = document.createElement('div');
@@ -1047,7 +1050,7 @@ function moveToNextTweet() {
                 bottomCard.style.top = normalPositionTop + 'px';
                 bottomCard.style.left = '1rem';
                 bottomCard.style.width = `calc(100% - 2rem)`;
-                bottomCard.style.height = currentBottomHeight + 'px'; // Yüksekliği sabit tut
+                bottomCard.style.height = currentBottomHeight + 'px'; // Yüksekliği sabitle
                 bottomCard.style.transform = 'translateY(100vh)'; // Ekranın altına kaydır (görünmez)
                 bottomCard.style.opacity = '0';
                 bottomCard.style.zIndex = '5';
