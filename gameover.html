@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tweet Battle - Game Over</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="translations.js"></script>
@@ -36,6 +36,15 @@
             -moz-osx-font-smoothing: grayscale;
             min-height: max(884px, 100dvh);
         }
+        
+        /* Safe area support for mobile browsers */
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        footer.sticky {
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
         .material-symbols-outlined {
             font-variation-settings:
             'FILL' 0,
@@ -62,7 +71,7 @@
     </style>
 </head>
 <body class="font-display overflow-hidden">
-<div class="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; max-height: 100vh;'>
+<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
 <!-- Top App Bar -->
 <div class="flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
 <span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="swords">
@@ -105,7 +114,7 @@
 </div>
 
 <!-- Play Again Button -->
-<footer class="relative p-4 pb-safe bg-transparent backdrop-blur-sm z-10" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="playAgainButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
 <span class="truncate">Tekrar Oyna</span>

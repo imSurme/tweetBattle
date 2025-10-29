@@ -2,7 +2,7 @@
 
 <html class="light" lang="tr"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Tweet Battle - Game</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
@@ -39,6 +39,15 @@
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Safe area support for mobile browsers (Samsung Internet, Safari, etc.) */
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        footer.sticky {
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom));
         }
         .tweet-card {
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
@@ -108,8 +117,6 @@
 <style>
     body {
       min-height: max(884px, 100dvh);
-      /* Safe area support for mobile */
-      padding-bottom: env(safe-area-inset-bottom, 0);
     }
   </style>
   <style>
@@ -130,7 +137,7 @@
   </style>
   </head>
 <body class="font-display overflow-hidden">
-<div class="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; max-height: 100vh;'>
+<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
 <!-- Top App Bar -->
 <div class="relative flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
 <!-- Back Button -->
@@ -218,7 +225,7 @@
 <h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
 </div>
 <!-- Action Buttons -->
-<footer class="relative p-4 pb-safe bg-transparent backdrop-blur-sm z-10" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
+<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="lowerButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary/20 dark:bg-primary/30 text-primary text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
 <span class="material-symbols-outlined">arrow_downward</span>
