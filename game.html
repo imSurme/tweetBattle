@@ -141,7 +141,7 @@
 </span>
 <h1 class="text-[#0d161c] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight">Tweet Battle</h1>
 </div>
-<main class="relative flex flex-col flex-1 px-4 py-6 gap-4 min-h-0 overflow-hidden">
+<main class="relative flex flex-col flex-1 px-4 py-6 gap-4 min-h-0 overflow-hidden pb-20">
 <!-- First Tweet Card (Visible Stats) -->
 <div id="topTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 0%; min-height: 0;">
 <div class="tweet-content-scrollable px-4 pt-2">
@@ -216,7 +216,7 @@
 <h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
 </div>
 <!-- Action Buttons -->
-    <footer class="sticky bottom-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-transparent backdrop-blur-sm">
+    <footer class="sticky bottom-0 p-4 pb-[max(1rem,calc(1rem+env(safe-area-inset-bottom)))] bg-transparent backdrop-blur-sm" style="padding-bottom: max(1rem, calc(1rem + env(safe-area-inset-bottom, 20px)));">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="lowerButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary/20 dark:bg-primary/30 text-primary text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
 <span class="material-symbols-outlined">arrow_downward</span>
