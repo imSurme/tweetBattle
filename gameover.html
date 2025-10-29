@@ -177,6 +177,7 @@
         });
         
         document.getElementById('playAgainButton').addEventListener('click', () => {
+            showGlobalSpinner();
             localStorage.setItem('difficulty', selectedDifficulty);
             localStorage.removeItem('tweetBattleScore');
             document.body.classList.add('fade-out');
@@ -184,7 +185,27 @@
                 window.location.href = 'game.html';
             }, 150);
         });
+        
+        // Global spinner
+        function showGlobalSpinner() {
+            const spinner = document.getElementById('globalSpinner');
+            if (spinner) spinner.style.display = 'flex';
+        }
+        window.addEventListener('beforeunload', () => {
+            showGlobalSpinner();
+        });
     });
 </script>
+</div>
+
+<!-- Global Spinner Overlay -->
+<div id="globalSpinner" style="display:none; position:fixed; inset:0; z-index:99999; background: rgba(255,255,255,0.7);" class="dark:bg-black/50 flex items-center justify-center">
+  <div class="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      #globalSpinner { background: rgba(16,27,34,0.5); }
+    }
+  </style>
+</div>
 </body>
 </html>

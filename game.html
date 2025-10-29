@@ -1312,13 +1312,31 @@ document.getElementById('backButton').addEventListener('click', () => {
         ? 'Oyunu terk etmek istediğinize emin misiniz? İlerlemeniz kaybolacak.'
         : 'Are you sure you want to leave? Your progress will be lost.';
     if (confirm(confirmMsg)) {
+        showGlobalSpinner();
         document.body.classList.add('fade-out');
         setTimeout(() => {
             window.location.href = 'index.html';
         }, 150);
     }
 });
+// Global loading spinner
+function showGlobalSpinner() {
+    const spinner = document.getElementById('globalSpinner');
+    if (spinner) spinner.style.display = 'flex';
+}
+window.addEventListener('beforeunload', () => {
+    showGlobalSpinner();
+});
 </script>
 
+<!-- Global Spinner Overlay -->
+<div id="globalSpinner" style="display:none; position:fixed; inset:0; z-index:99999; background: rgba(255,255,255,0.7);" class="dark:bg-black/50 flex items-center justify-center">
+  <div class="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      #globalSpinner { background: rgba(16,27,34,0.5); }
+    }
+  </style>
+</div>
 </body></html>
 
