@@ -63,3 +63,7 @@ http://localhost:8000/index.html
 - `start_server.py` is only for local testing (to fix CORS issues)
 - Works directly on GitHub Pages, no server needed
 - Free and open source project
+
+## 📚 Data Source and Attribution
+
+- The sample dataset file `twitter-posts.csv` was sourced from the following repository: [luminati-io/Twitter-X-dataset-samples](https://github.com/luminati-io/Twitter-X-dataset-samples).

@@ -64,3 +64,7 @@ http://localhost:8000/index.html
 - GitHub Pages'te direkt çalışır, sunucuya gerek yok
 - Ücretsiz ve açık kaynak proje
 
+
+## 📚 Veri Kaynağı ve Atıf
+
+- `twitter-posts.csv` örnek veri dosyası şu GitHub deposundan alınmıştır: [luminati-io/Twitter-X-dataset-samples](https://github.com/luminati-io/Twitter-X-dataset-samples).
