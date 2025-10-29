@@ -955,9 +955,7 @@ function moveToNextTweet() {
         topCard.style.flex = 'none';
         topCard.style.minHeight = '0';
         
-        renderTweet(currentTopTweet, true);
-        
-        // Üst tweet'i yukarı kaydır ve gizle (içeriği zaten güncellenmiş)
+        // Üst tweet'i yukarı kaydır ve gizle (içeriği animasyon bitince güncellenecek)
         topCard.classList.add('slide-up');
         
         // Alt tweet'in yüksekliğini sabitle (flex-1 sayesinde genişlemesin)
@@ -977,7 +975,10 @@ function moveToNextTweet() {
         
         // Animasyon tamamlandığında
         setTimeout(() => {
-            // Üst tweet'i anında görünür yap (transition olmadan, içeriği zaten güncellenmiş)
+            // Üst tweet'in içeriğini şimdi güncelle (eski tweet'in içeriği görünecek)
+            renderTweet(currentTopTweet, true);
+            
+            // Üst tweet'i anında görünür yap (transition olmadan)
             topCard.style.transition = 'none';
             topCard.classList.remove('slide-up');
             topCard.style.transform = '';
