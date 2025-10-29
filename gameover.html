@@ -72,35 +72,37 @@
 </div>
 
 <!-- Game Over Content -->
-<div class="flex flex-col items-center justify-center flex-1 px-4 py-8 overflow-hidden">
-<div class="flex flex-col items-center gap-8 w-full max-w-md">
+<div class="flex flex-col items-center justify-center flex-1 px-4 py-8 overflow-y-auto min-h-0">
+<div class="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl">
+<!-- Left Side: Icon and Title -->
+<div class="flex flex-col items-center gap-4 md:w-1/2">
 <!-- Game Over Icon -->
-<div class="w-24 h-24 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shadow-lg">
-<span class="material-symbols-outlined text-5xl text-red-500 dark:text-red-400">
+<div class="w-24 h-24 md:w-32 md:h-32 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-5xl md:text-6xl text-red-500 dark:text-red-400">
     sentiment_dissatisfied
 </span>
 </div>
-
 <!-- Game Over Title -->
-<h2 id="gameOverTitle" class="text-[#0d161c] dark:text-white text-3xl font-extrabold leading-tight tracking-tight text-center">Oyun Bitti</h2>
+<h2 id="gameOverTitle" class="text-[#0d161c] dark:text-white text-3xl md:text-5xl font-extrabold leading-tight tracking-tight text-center">Oyun Bitti</h2>
+</div>
 
-<!-- Score Display -->
-<div class="flex flex-col items-center gap-3 bg-white dark:bg-background-dark rounded-xl shadow-md p-8 w-full">
+<!-- Right Side: Score Display -->
+<div class="flex flex-col items-center gap-3 bg-white dark:bg-background-dark rounded-xl shadow-md p-8 w-full md:w-1/2">
 <p id="finalScoreLabel" class="text-text-light-secondary dark:text-text-dark-secondary text-base font-semibold">Final Skorunuz</p>
 <p class="text-primary text-6xl font-extrabold leading-tight tracking-tight"><span id="finalScore">0</span></p>
 <p id="highScoreLabel" class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-semibold mt-2">En Yüksek Skor</p>
 <p class="text-primary/80 text-2xl font-bold"><span id="highScoreDisplay">0</span></p>
 </div>
+</div>
 
 <!-- Difficulty Selection -->
-<div class="mt-4 w-full max-w-md flex flex-col items-center">
+<div class="mt-8 w-full max-w-4xl flex flex-col items-center">
 <p id="selectDifficulty" class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-semibold mb-3 text-center">Zorluk Seviyesi</p>
 <button id="difficultyToggle" class="difficulty-toggle flex items-center justify-center gap-2 rounded-full h-12 px-8 bg-white dark:bg-background-dark shadow-sm hover:shadow-md transition-all cursor-pointer border-2 border-primary w-full max-w-xs">
 <span class="material-symbols-outlined text-lg" id="difficultyIcon">trending_flat</span>
 <span class="text-base font-semibold text-text-light-primary dark:text-text-dark-primary" id="difficultyText">Orta</span>
 </button>
 </div>
-
 </div>
 </div>
 
