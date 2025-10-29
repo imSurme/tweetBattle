@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="light" lang="tr"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>Tweet Battle - Welcome</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="translations.js"></script>
@@ -103,7 +103,7 @@
 <div class="flex-grow"></div>
 </main>
 <!-- Start Button -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+<footer class="sticky bottom-0 p-4 pb-safe bg-transparent backdrop-blur-sm z-10" style="padding-bottom: max(1rem, env(safe-area-inset-bottom));">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="startButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
 <span class="truncate">Başla</span>
