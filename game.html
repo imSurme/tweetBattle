@@ -627,21 +627,76 @@ async function startGame() {
         
         let bottomTweet;
         if (difficulty === 'easy') {
-            // Kolay: Üst tweet düşükse yüksek, yüksekse düşük seç
+            // Kolay: Başta çok açık karşıt seviye, skor arttıkça daha fazla çeşitlilik
+            // Ama her zaman ortalama engagement farkı yüksek kalır
             const midPoint = sortedFiltered.length / 2;
-            if (topEngagement <= sortedFiltered[midPoint].engagement) {
-                // Üst tweet düşük, alt tweet YÜKSEK seç
-                const highTweets = sortedFiltered.slice(Math.floor(midPoint));
-                bottomTweet = highTweets[Math.floor(Math.random() * highTweets.length)].tweet;
+            let selectionRange = 0.15; // İlk %15'lik uç alan (çok açık fark)
+            let oppositeChance = 0.85; // Başta %85 karşıt seviye
+            
+            // Skor arttıkça daha fazla çeşitlilik ama fark hala belirgin
+            if (score >= 15) {
+                selectionRange = 0.25; // Orta-uzak aralık (hala farklı ama daha karışık)
+                oppositeChance = 0.6; // %60 karşıt, %40 benzer/orta
+            } else if (score >= 10) {
+                selectionRange = 0.20; // Uzak-orta aralık
+                oppositeChance = 0.70; // %70 karşıt, %30 benzer/orta
+            } else if (score >= 5) {
+                selectionRange = 0.18; // Uzak alan
+                oppositeChance = 0.75; // %75 karşıt, %25 benzer/orta
+            }
+            
+            // Karşıt veya benzer seçim yap
+            const useOpposite = Math.random() < oppositeChance;
+            
+            if (useOpposite) {
+                // Karşıt seviye seç
+                if (topEngagement <= sortedFiltered[Math.floor(midPoint)].engagement) {
+                    // Üst tweet düşük, alt tweet YÜKSEK seç ama skor arttıkça daha yakın
+                    const highStart = Math.floor(sortedFiltered.length * (1 - selectionRange));
+                    const highTweets = sortedFiltered.slice(highStart);
+                    bottomTweet = highTweets[Math.floor(Math.random() * highTweets.length)].tweet;
+                } else {
+                    // Üst tweet yüksek, alt tweet DÜŞÜK seç ama skor arttıkça daha yakın
+                    const lowEnd = Math.ceil(sortedFiltered.length * selectionRange);
+                    const lowTweets = sortedFiltered.slice(0, lowEnd);
+                    bottomTweet = lowTweets[Math.floor(Math.random() * lowTweets.length)].tweet;
+                }
             } else {
-                // Üst tweet yüksek, alt tweet DÜŞÜK seç
-                const lowTweets = sortedFiltered.slice(0, Math.ceil(midPoint));
-                bottomTweet = lowTweets[Math.floor(Math.random() * lowTweets.length)].tweet;
+                // Benzer/orta seviye seç (çeşitlilik için ama hala belirli fark)
+                // Üst tweete yakın ama aynı zamanda orta seviyelere de bak
+                const targetEngagement = topEngagement;
+                // Orta engagement aralığından seç (farklı ama çok uzak değil)
+                const midStart = Math.floor(sortedFiltered.length * 0.3);
+                const midEnd = Math.ceil(sortedFiltered.length * 0.7);
+                const midTweets = sortedFiltered.slice(midStart, midEnd).filter(t => 
+                    t.tweet !== currentTopTweet &&
+                    Math.abs(t.engagement - targetEngagement) > targetEngagement * 0.1 // En az %10 fark
+                );
+                
+                if (midTweets.length > 0) {
+                    // Orta seviye tweetlerden seç
+                    bottomTweet = midTweets[Math.floor(Math.random() * midTweets.length)].tweet;
+                } else {
+                    // Fallback: Orta seviye
+                    const midTweet = sortedFiltered[Math.floor(sortedFiltered.length / 2)];
+                    bottomTweet = midTweet.tweet !== currentTopTweet 
+                        ? midTweet.tweet
+                        : sortedFiltered[Math.floor(sortedFiltered.length * 0.5 + (Math.random() - 0.5) * 0.2)].tweet;
+                }
             }
         } else if (difficulty === 'hard') {
             // Zor: Üst tweet ile BENZER engagement seviyesi seç
             const targetEngagement = topEngagement;
-            const tolerance = targetEngagement * 0.15; // %15 tolerans
+            // Skor arttıkça çok dar tolerans (benzer değil, neredeyse aynı)
+            let tolerancePercent = 0.20; // Başta daha geniş
+            if (score >= 15) {
+                tolerancePercent = 0.03; // Çok zor - %3 tolerans
+            } else if (score >= 10) {
+                tolerancePercent = 0.08; // Zor - %8 tolerans
+            } else if (score >= 5) {
+                tolerancePercent = 0.12; // Orta-zor - %12 tolerans
+            }
+            const tolerance = targetEngagement * tolerancePercent;
             
             const similarTweets = sortedFiltered.filter(t => 
                 t.tweet !== currentTopTweet &&
@@ -667,13 +722,31 @@ async function startGame() {
                     : filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
             }
         } else {
-            // Orta: Rastgele ama farklı tweet seç
+            // Orta: Skor arttıkça daha benzer engagement'lar seç
             const differentTweets = sortedFiltered.filter(t => 
                 t.tweet !== currentTopTweet && 
                 t.tweet.likes !== currentTopTweet.likes
             );
+            
             if (differentTweets.length > 0) {
-                bottomTweet = differentTweets[Math.floor(Math.random() * differentTweets.length)].tweet;
+                // Skor arttıkça üst tweet'e yakın engagement'lı tweetler tercih et
+                if (score >= 15) {
+                    // Çok zor: En yakın engagement seç
+                    differentTweets.sort((a, b) => 
+                        Math.abs(a.engagement - topEngagement) - Math.abs(b.engagement - topEngagement)
+                    );
+                    bottomTweet = differentTweets[0].tweet;
+                } else if (score >= 10) {
+                    // Orta-zor: Yakın olanları tercih et
+                    const nearby = differentTweets
+                        .map(t => ({ tweet: t.tweet, diff: Math.abs(t.engagement - topEngagement) }))
+                        .sort((a, b) => a.diff - b.diff)
+                        .slice(0, Math.ceil(differentTweets.length * 0.3));
+                    bottomTweet = nearby[Math.floor(Math.random() * nearby.length)].tweet;
+                } else {
+                    // Rastgele
+                    bottomTweet = differentTweets[Math.floor(Math.random() * differentTweets.length)].tweet;
+                }
             } else {
                 bottomTweet = filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
             }
@@ -718,26 +791,73 @@ function moveToNextTweet() {
         })).sort((a, b) => a.engagement - b.engagement);
         
         const midPoint = sortedFiltered.length / 2;
-        if (topEngagement <= sortedFiltered[Math.floor(midPoint)].engagement) {
-            // Üst tweet düşük, alt tweet YÜKSEK seç
-            const highTweets = sortedFiltered.slice(Math.floor(midPoint));
-            const availableHigh = highTweets.filter(t => 
-                t.tweet !== currentTopTweet && 
-                !usedTweets.has(tweetPool.indexOf(t.tweet))
-            );
-            bottomTweet = availableHigh.length > 0 
-                ? availableHigh[Math.floor(Math.random() * availableHigh.length)].tweet
-                : highTweets[Math.floor(Math.random() * highTweets.length)].tweet;
+        // Skor arttıkça daha fazla çeşitlilik ama fark hala belirgin
+        let selectionRange = 0.15; // İlk %15'lik uç alan
+        let oppositeChance = 0.85; // Başta %85 karşıt seviye
+        
+        if (score >= 15) {
+            selectionRange = 0.25; // Orta-uzak aralık
+            oppositeChance = 0.6; // %60 karşıt, %40 benzer/orta
+        } else if (score >= 10) {
+            selectionRange = 0.20; // Uzak-orta aralık
+            oppositeChance = 0.70; // %70 karşıt
+        } else if (score >= 5) {
+            selectionRange = 0.18; // Uzak alan
+            oppositeChance = 0.75; // %75 karşıt
+        }
+        
+        // Karşıt veya benzer seçim yap
+        const useOpposite = Math.random() < oppositeChance;
+        
+        if (useOpposite) {
+            // Karşıt seviye seç
+            if (topEngagement <= sortedFiltered[Math.floor(midPoint)].engagement) {
+                // Üst tweet düşük, alt tweet YÜKSEK seç ama skor arttıkça daha yakın
+                const highStart = Math.floor(sortedFiltered.length * (1 - selectionRange));
+                const highTweets = sortedFiltered.slice(highStart);
+                const availableHigh = highTweets.filter(t => 
+                    t.tweet !== currentTopTweet && 
+                    !usedTweets.has(tweetPool.indexOf(t.tweet))
+                );
+                bottomTweet = availableHigh.length > 0 
+                    ? availableHigh[Math.floor(Math.random() * availableHigh.length)].tweet
+                    : highTweets[Math.floor(Math.random() * highTweets.length)].tweet;
+            } else {
+                // Üst tweet yüksek, alt tweet DÜŞÜK seç ama skor arttıkça daha yakın
+                const lowEnd = Math.ceil(sortedFiltered.length * selectionRange);
+                const lowTweets = sortedFiltered.slice(0, lowEnd);
+                const availableLow = lowTweets.filter(t => 
+                    t.tweet !== currentTopTweet && 
+                    !usedTweets.has(tweetPool.indexOf(t.tweet))
+                );
+                bottomTweet = availableLow.length > 0 
+                    ? availableLow[Math.floor(Math.random() * availableLow.length)].tweet
+                    : lowTweets[Math.floor(Math.random() * lowTweets.length)].tweet;
+            }
         } else {
-            // Üst tweet yüksek, alt tweet DÜŞÜK seç
-            const lowTweets = sortedFiltered.slice(0, Math.ceil(midPoint));
-            const availableLow = lowTweets.filter(t => 
-                t.tweet !== currentTopTweet && 
-                !usedTweets.has(tweetPool.indexOf(t.tweet))
+            // Benzer/orta seviye seç (çeşitlilik için ama hala belirli fark)
+            const targetEngagement = topEngagement;
+            // Orta engagement aralığından seç (farklı ama çok uzak değil)
+            const midStart = Math.floor(sortedFiltered.length * 0.3);
+            const midEnd = Math.ceil(sortedFiltered.length * 0.7);
+            const midTweets = sortedFiltered.slice(midStart, midEnd).filter(t => 
+                t.tweet !== currentTopTweet &&
+                !usedTweets.has(tweetPool.indexOf(t.tweet)) &&
+                Math.abs(t.engagement - targetEngagement) > targetEngagement * 0.1 // En az %10 fark
             );
-            bottomTweet = availableLow.length > 0 
-                ? availableLow[Math.floor(Math.random() * availableLow.length)].tweet
-                : lowTweets[Math.floor(Math.random() * lowTweets.length)].tweet;
+            
+            if (midTweets.length > 0) {
+                // Orta seviye tweetlerden seç
+                bottomTweet = midTweets[Math.floor(Math.random() * midTweets.length)].tweet;
+            } else {
+                // Fallback: Orta seviye
+                const midTweet = sortedFiltered[Math.floor(sortedFiltered.length / 2)];
+                if (midTweet.tweet !== currentTopTweet && !usedTweets.has(tweetPool.indexOf(midTweet.tweet))) {
+                    bottomTweet = midTweet.tweet;
+                } else {
+                    bottomTweet = filteredTweets.find(t => t !== currentTopTweet && !usedTweets.has(tweetPool.indexOf(t))) || filteredTweets[0];
+                }
+            }
         }
     } else if (difficulty === 'hard') {
         // Zor: Üst tweet ile BENZER engagement seviyesi seç
@@ -751,9 +871,18 @@ function moveToNextTweet() {
         if (topIndex === -1) {
             bottomTweet = filteredTweets.find(t => t !== currentTopTweet) || filteredTweets[0];
         } else {
-            // Üst tweet'e yakın engagement'lı tweetler seç (±%10 civarı)
+            // Skora göre dinamik tolerans (skor arttıkça çok zorlaş)
             const targetEngagement = sortedFiltered[topIndex].engagement;
-            const tolerance = targetEngagement * 0.15; // %15 tolerans
+            // Zor mod: Başta %20 tolerans (orta-zor), sonra çok dar tolerans (çok zor)
+            let tolerancePercent = 0.20; // Başta daha geniş
+            if (score >= 15) {
+                tolerancePercent = 0.03; // Çok zor - %3 tolerans
+            } else if (score >= 10) {
+                tolerancePercent = 0.08; // Zor - %8 tolerans
+            } else if (score >= 5) {
+                tolerancePercent = 0.12; // Orta-zor - %12 tolerans
+            }
+            const tolerance = targetEngagement * tolerancePercent;
             
             const similarTweets = sortedFiltered.filter(t => 
                 t.tweet !== currentTopTweet &&
