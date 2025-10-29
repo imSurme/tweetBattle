@@ -19,7 +19,6 @@ Tweet etkileşimlerini tahmin etme oyunu! Hangi tweet daha çok beğeni, retweet
 - 📈 **Progresif Zorluk**: Skor arttıkça tüm modlarda zorluk otomatik artar
 - 🌍 **Çoklu Dil**: Türkçe ve İngilizce desteği
 - 📈 **En Yüksek Skor**: Kendi rekorunu kır
-- 🎨 **Modern Tasarım**: Responsive (mobil öncelikli) tasarım
 
 ## 🚀 Yerel Geliştirme
 

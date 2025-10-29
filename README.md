@@ -19,7 +19,6 @@ A game to predict tweet engagement! Which tweet got more likes, retweets, and vi
 - 📈 **Progressive Difficulty**: Difficulty automatically increases with score in all modes
 - 🌍 **Multi-language**: Turkish and English support
 - 📈 **High Score**: Beat your own record
-- 🎨 **Modern Design**: Responsive (mobile-first) design
 
 ## 🚀 Local Development
 
