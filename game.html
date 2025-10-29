@@ -971,7 +971,7 @@ function moveToNextTweet() {
         const topCardRect = topCard.getBoundingClientRect();
         const marginBottom = 16; // mb-4 = 1rem = 16px
         // Toplam: üst tweet yüksekliği + margin bottom + VS alanı yüksekliği + margin
-        const extraOffset = 0; // Offset kaldırıldı - fazla yukarı kaymıyor
+        const extraOffset = 0; // Yeni gelen tweet için ayar yapılacak, mevcut kaydırmaya dokunma
         const totalOffset = topCardRect.height + marginBottom + vsHeight + marginBottom + extraOffset;
         bottomCard.style.transform = `translateY(-${totalOffset}px)`;
         
@@ -1027,6 +1027,8 @@ function moveToNextTweet() {
                 const mainContainerPadding = 24; // py-6 = 1.5rem = 24px
                 const topCardBottom = updatedTopCardRect.height + mainContainerPadding; // üst tweet + padding
                 const normalPositionTop = topCardBottom + gap + vsHeight + gap; // gap + VS + gap
+                const incomingOffset = 10; // Yeni gelen tweet'i biraz daha yukarıda sonlandır
+                const adjustedPositionTop = Math.max(0, normalPositionTop - incomingOffset);
                 
                 // Alt tweet'in yüksekliğini önce sabit tut (şu anki yüksekliği)
                 const currentBottomHeight = bottomCard.getBoundingClientRect().height;
@@ -1047,7 +1049,7 @@ function moveToNextTweet() {
                 // Alt tweet'i absolute ile sayfanın en altına (ekran dışına) yerleştir
                 bottomCard.style.transition = 'none'; // Önce transition'ı kapat
                 bottomCard.style.position = 'absolute';
-                bottomCard.style.top = normalPositionTop + 'px';
+                bottomCard.style.top = adjustedPositionTop + 'px';
                 bottomCard.style.left = '1rem';
                 bottomCard.style.width = `calc(100% - 2rem)`;
                 bottomCard.style.height = currentBottomHeight + 'px'; // Yüksekliği sabitle
@@ -1158,7 +1160,7 @@ function checkGuess(isHigher) {
             // Combo bonusu!
             score += 2; // Ekstra 2 puan
             updateScoreDisplay();
-            updateHighScore(score);
+            // Rekor güncellemesi Game Over ekranında yapılacak
             
             // Başarı animasyonu: Yeşil overlay hemen göster (son istatistik açıldığı anda)
             const overlay = document.createElement('div');
@@ -1244,7 +1246,7 @@ function checkGuess(isHigher) {
                 
                 // Kırmızı animasyon bittikten hemen sonra game over'a yönlendir
                 localStorage.setItem('tweetBattleScore', score.toString());
-                updateHighScore(score); // En yüksek skoru kontrol et
+                // Rekor güncellemesi Game Over ekranında yapılacak
                 window.location.href = `gameover.html?score=${score}`;
             }, 500);
         }, 500);

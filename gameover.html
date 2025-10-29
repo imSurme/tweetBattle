@@ -129,9 +129,14 @@
         }
         document.getElementById('finalScore').textContent = score;
         
-        // En yüksek skoru göster
-        const highScore = parseInt(localStorage.getItem('tweetBattleHighScore') || '0');
-        document.getElementById('highScoreDisplay').textContent = highScore;
+        // En yüksek skoru güncelle ve göster (rekor yalnızca Game Over'da güncellenir)
+        const finalScore = parseInt(score || '0');
+        const previousHigh = parseInt(localStorage.getItem('tweetBattleHighScore') || '0');
+        const newHigh = finalScore > previousHigh ? finalScore : previousHigh;
+        if (newHigh !== previousHigh) {
+            localStorage.setItem('tweetBattleHighScore', String(newHigh));
+        }
+        document.getElementById('highScoreDisplay').textContent = newHigh;
         
         // Zorluk seçimi (varsayılan: son seçilen veya medium)
         let selectedDifficulty = localStorage.getItem('difficulty') || 'medium';
