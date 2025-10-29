@@ -45,7 +45,7 @@
         }
         .tweet-card {
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
-            max-height: 240px;
+            min-height: 200px;
             overflow: hidden;
         }
         .tweet-content-scrollable {
@@ -143,9 +143,9 @@
 </span>
 <h1 class="text-[#0d161c] dark:text-white tracking-tight text-[32px] font-extrabold leading-tight">Tweet Battle</h1>
 </div>
-<main class="relative flex flex-col flex-1 px-4 py-6 gap-4 min-h-0 overflow-y-auto" style="padding-bottom: calc(7rem + var(--safe-bottom));">
+<main class="relative flex flex-col flex-1 px-4 py-4 gap-4 min-h-0 overflow-y-auto">
 <!-- First Tweet Card (Visible Stats) -->
-<div id="topTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 0%; min-height: 0;">
+<div id="topTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 auto;">
 <div class="tweet-content-scrollable px-4 pt-2">
 <div class="flex flex-col items-center gap-3 mb-4">
 <div class="w-12 h-12 shrink-0 bg-center bg-no-repeat bg-cover rounded-full" data-alt="Profile avatar" id="topTweetAvatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCCH7NLLq50a3h1sC0XnEmhTBWJAJpGirdSRRvf_NOSHsMihYK5VBovRmYsgiAqURCkWB33bWBr5ss3-bU50B1H4tBr20ydYXe85_hq0vwqLMC5gywjU7Q6F5QFTW5Hcv9fHb3YiXIy-nFlm0BW64KYHkMnd-LTD9DZ1m7D-y4Q-NLmUcXSOkxhJTO5SGkKWLdsmbsKbAQLlcqrHDPu1pYcQZVsPYvW0AdGkLWyAxIisqz6jluCgyCn2Ono85GMXY342o4PvNXoyEc");'></div>
@@ -179,7 +179,7 @@
 </div>
 </div>
 <!-- Second Tweet Card (Hidden Stats) -->
-<div id="bottomTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 0%; min-height: 0;">
+<div id="bottomTweetCard" class="tweet-card flex flex-col items-stretch rounded-lg bg-white dark:bg-background-dark shadow-sm" style="flex: 1 1 auto;">
 <div class="tweet-content-scrollable px-4 pt-2">
 <div class="flex flex-col items-center gap-3 mb-4">
 <div class="w-12 h-12 shrink-0 bg-center bg-no-repeat bg-cover rounded-full" data-alt="Profile avatar" id="bottomTweetAvatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1u-SXQ4aAVmmO2R9BT-CkLFmKlp5wLuBkg0zb784o8y32zLKYGG1rgSyw7_rJZc7ygxcluRqOKo9gvVzI8H5zJ4nYTnqJR1HdDhhoSoA3naeVeWsO8m-PE6s4zIjGx4wXzcMfPtY5pQr-VGD1b47n16XD3-a7Sy2iNyNyu3ldP-5Eo6gn_EPM75dyHZZHnSPUvaq5vQZibPBa14B3wFXxwpiE2je_4FB6FkLGsG_h2PFEkJvQBYBpqP8orOE7nLGnBEUIPVnA9_M");'></div>
@@ -209,7 +209,7 @@
 </div>
 </main>
 <!-- Score Display -->
-<div class="flex items-center justify-center gap-4 px-4 py-3 bg-transparent">
+<div class="flex items-center justify-center gap-4 px-4 py-2 bg-transparent">
 <h2 class="text-text-light-primary dark:text-text-dark-primary text-xl font-bold leading-tight tracking-[-0.015em]"><span id="gameScore">Skor</span>: <span id="scoreDisplay">0</span></h2>
 <div id="streakContainer" class="flex items-center gap-2 hidden">
 <span class="material-symbols-outlined text-2xl text-orange-500 animate-pulse">local_fire_department</span>
@@ -218,7 +218,7 @@
 <h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
 </div>
 <!-- Action Buttons -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm" style="padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);">
+<footer class="sticky bottom-0 p-4 pb-2 bg-transparent backdrop-blur-sm" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="lowerButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary/20 dark:bg-primary/30 text-primary text-lg font-bold leading-normal tracking-[0.015em] gap-2 transition-transform hover:scale-105 active:scale-95">
 <span class="material-symbols-outlined">arrow_downward</span>
