@@ -1,64 +1,66 @@
 # 🔥 Tweet Battle
 
-Tweet etkileşimlerini tahmin etme oyunu! Hangi tweet daha çok beğeni, retweet ve görüntülenme aldı?
+A game to predict tweet engagement! Which tweet got more likes, retweets, and views?
 
-## 🎮 Nasıl Oynanır?
+> **🇬🇧 English** | **🇹🇷 [Türkçe](README.tr.md)**
 
-1. Zorluk seviyesi seç (Kolay/Orta/Zor)
-2. Üstteki tweet'in istatistiklerini gör
-3. Alttaki tweet'in istatistiklerini tahmin et (Yüksek/Düşük)
-4. Her istatistik (beğeni, retweet, görüntülenme) için ayrı tahmin yap
-5. Tüm 3 istatistiği doğru bilince combo bonusu kazan!
+## 🎮 How to Play
 
-## ✨ Özellikler
+1. Select difficulty level (Easy/Medium/Hard)
+2. View the top tweet's statistics
+3. Guess the bottom tweet's statistics (Higher/Lower)
+4. Make separate predictions for each stat (likes, retweets, views)
+5. Get a combo bonus when you guess all 3 stats correctly!
 
-- 🔥 **Streak Sistemi**: Ardışık doğru cevaplarda bonus puanlar
-- 📊 **3 Zorluk Seviyesi**: Kolay, Orta, Zor
-- 🌍 **Çoklu Dil**: Türkçe ve İngilizce desteği
-- 📈 **En Yüksek Skor**: Kendi rekorunu kır
-- 🎨 **Modern Tasarım**: Responsive (mobil öncelikli) tasarım
+## ✨ Features
 
-## 🚀 Yerel Geliştirme
+- 🔥 **Streak System**: Bonus points for consecutive correct answers
+- 📊 **3 Difficulty Levels**: Easy, Medium, Hard
+- 📈 **Progressive Difficulty**: Difficulty automatically increases with score in all modes
+- 🌍 **Multi-language**: Turkish and English support
+- 📈 **High Score**: Beat your own record
+- 🎨 **Modern Design**: Responsive (mobile-first) design
 
-### Gereksinimler
-- Python 3.x (sadece lokal test için)
-- Modern web tarayıcısı
+## 🚀 Local Development
 
-### Kurulum
+### Requirements
+- Python 3.x (for local testing only)
+- Modern web browser
 
-1. **Repository'yi klonlayın:**
+### Setup
+
+1. **Clone the repository:**
 ```bash
 git clone https://github.com/kullanici-adi/tweetBattle.git
 cd tweetBattle
 ```
 
-2. **Sunucuyu başlatın (lokal test için):**
+2. **Start the server (for local testing):**
 ```bash
 python start_server.py
 ```
 
-3. **Tarayıcıda açın:**
+3. **Open in browser:**
 ```
 http://localhost:8000/index.html
 ```
 
-## 📁 Dosya Yapısı
+## 📁 File Structure
 
-- `index.html` - Welcome ekranı
-- `game.html` - Oyun ekranı
-- `gameover.html` - Oyun bitti ekranı
-- `translations.js` - Çeviri dosyası
-- `tweets_pool.json` - Tweet verileri (gerekli)
-- `twitter-posts.csv` - Tweet verileri (kaynak)
-- `start_server.py` - Yerel HTTP sunucusu (lokal test için)
-- `csv_to_json.py` - CSV'den JSON'a dönüştürücü (isteğe bağlı)
+- `index.html` - Welcome screen
+- `game.html` - Game screen
+- `gameover.html` - Game over screen
+- `translations.js` - Translation file
+- `tweets_pool.json` - Tweet data (required)
+- `twitter-posts.csv` - Tweet data (source)
+- `start_server.py` - Local HTTP server (for local testing)
+- `csv_to_json.py` - CSV to JSON converter (optional)
 
-## 📝 Notlar
+## 📝 Notes
 
-- `tweets_pool.json` dosyası gereklidir (tweet verileri için)
-- `twitter-posts.csv` ve `tweets_pool.json` repository'de mevcut, `csv_to_json.py` çalıştırmaya gerek yok
-- Tüm veriler tarayıcıda (localStorage) saklanır
-- `start_server.py` sadece lokal test içindir (CORS sorununu çözmek için)
-- GitHub Pages'te direkt çalışır, sunucuya gerek yok
-- Ücretsiz ve açık kaynak proje
-
+- `tweets_pool.json` file is required (for tweet data)
+- `twitter-posts.csv` and `tweets_pool.json` are already in the repository, no need to run `csv_to_json.py`
+- All data is stored in the browser (localStorage)
+- `start_server.py` is only for local testing (to fix CORS issues)
+- Works directly on GitHub Pages, no server needed
+- Free and open source project
