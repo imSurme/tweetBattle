@@ -216,6 +216,11 @@
 <h3 class="text-orange-500 text-lg font-bold leading-tight"><span id="streakDisplay">0</span></h3>
 </div>
 <h3 class="text-text-light-secondary dark:text-text-dark-secondary text-lg font-semibold leading-tight"><span id="highScoreLabel">Rekor</span>: <span id="highScoreDisplay">0</span></h3>
+<div id="livesContainer" class="flex items-center gap-1 ml-2" aria-label="lives">
+<span class="material-symbols-outlined text-red-500">favorite</span>
+<span class="material-symbols-outlined text-red-500">favorite</span>
+<span class="material-symbols-outlined text-red-500">favorite</span>
+</div>
 </div>
 <!-- Action Buttons -->
 <footer class="sticky bottom-0 p-4 pb-2 bg-transparent backdrop-blur-sm" style="padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);">
@@ -299,6 +304,7 @@ let usedTweets = new Set();
 let currentStatIndex = 0; // 0: likes, 1: retweets, 2: views
 let statsGuessed = [false, false, false]; // Hangi istatistikler tahmin edildi
 let streak = 0; // Seri sayısı
+let lives = 3; // Can sayısı
 
 // En yüksek skor yönetimi
 function getHighScore() {
@@ -319,6 +325,7 @@ function updateScoreDisplay() {
     const highScore = getHighScore();
     document.getElementById('highScoreDisplay').textContent = highScore;
     updateStreakDisplay();
+    updateLivesDisplay();
 }
 
 function updateStreakDisplay() {
@@ -363,6 +370,28 @@ function getStreakBonus() {
     return Math.floor(streak / 5);
 }
 const statTypes = ['likes', 'retweets', 'views'];
+
+// Can göstergesini güncelle
+function updateLivesDisplay() {
+    const container = document.getElementById('livesContainer');
+    if (!container) return;
+    // Zorluğa göre toplam can: kolay=3, orta=2, zor=1
+    const total = getMaxLives();
+    const hearts = [];
+    for (let i = 0; i < total; i++) {
+        const filled = i < lives;
+        hearts.push(`<span class="material-symbols-outlined ${filled ? 'text-red-500' : 'text-slate-300 dark:text-slate-600'}">favorite</span>`);
+    }
+    container.innerHTML = hearts.join('');
+}
+
+// Zorluğa göre maksimum canı döndür
+function getMaxLives() {
+    const difficulty = localStorage.getItem('difficulty') || 'medium';
+    if (difficulty === 'easy') return 3;
+    if (difficulty === 'hard') return 1;
+    return 2; // medium
+}
 
 // Sayıyı formatla (15.2K, 1.3M gibi)
 function formatNumber(num) {
@@ -598,6 +627,8 @@ async function startGame() {
     usedTweets.clear();
     currentStatIndex = 0;
     statsGuessed = [false, false, false];
+    lives = getMaxLives();
+    updateLivesDisplay();
     
     // JSON'dan tweet'leri yükle (varsa)
     const loadedTweets = await loadTweetPool();
@@ -1182,19 +1213,19 @@ function checkGuess(isHigher) {
                 overlay.style.opacity = '0.4'; // Daha açık
             });
             
-            // Yeşil animasyon bittikten hemen sonra kartı yukarı kaydır
+            // Yeşil: Akışı hızlı başlat (250ms), overlay'i paralelde söndür/kaldır
             setTimeout(() => {
-                // Yeşil animasyon bittikten hemen sonra kart animasyonunu başlat
                 moveToNextTweet();
-                
-                // Overlay'i kaldır
-                overlay.style.transition = 'opacity 0.3s ease-out';
+            }, 250);
+
+            setTimeout(() => {
+                overlay.style.transition = 'opacity 0.5s ease-out';
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                     if (overlay.parentNode) {
                         overlay.parentNode.removeChild(overlay);
                     }
-                }, 300);
+                }, 500);
             }, 500);
         } else {
             // Bir sonraki istatistiğe geç
@@ -1209,6 +1240,9 @@ function checkGuess(isHigher) {
     } else {
         // Yanlış tahmin - Streak sıfırla
         streak = 0;
+        // Can azalt ve göster
+        lives = Math.max(0, lives - 1);
+        updateLivesDisplay();
         
         // Yanlış tahmin - Başarısızlık animasyonu: Kırmızı overlay göster
         const overlay = document.createElement('div');
@@ -1235,21 +1269,29 @@ function checkGuess(isHigher) {
         document.getElementById('bottomTweetRetweets').textContent = formatNumber(currentBottomTweet.retweets);
         document.getElementById('bottomTweetViews').textContent = formatNumber(currentBottomTweet.views);
         
-        // Animasyonu kaldır ve hemen ardından game over'a yönlendir
+        // Geçişi hızlı başlat: overlay görünür olduktan kısa süre sonra akışı ilerlet
+        // Can varsa hemen yeni tweete geç; can yoksa yönlendirmeyi overlay tamamen söndükten sonra yapacağız
         setTimeout(() => {
-            overlay.style.transition = 'opacity 0.5s ease-out';
+            if (lives > 0) {
+                moveToNextTweet();
+            }
+        }, 250);
+
+        // Overlay'i paralelde söndür ve kaldır (akıştan bağımsız ve daha kısa bekleme)
+        setTimeout(() => {
+            overlay.style.transition = 'opacity 0.3s ease-out';
             overlay.style.opacity = '0';
             setTimeout(() => {
                 if (overlay.parentNode) {
                     overlay.parentNode.removeChild(overlay);
                 }
-                
-                // Kırmızı animasyon bittikten hemen sonra game over'a yönlendir
-                localStorage.setItem('tweetBattleScore', score.toString());
-                // Rekor güncellemesi Game Over ekranında yapılacak
-                window.location.href = `gameover.html?score=${score}`;
-            }, 500);
-        }, 500);
+                // Canlar bittiyse overlay tamamen söndükten sonra gameover'a yönlendir
+                if (lives <= 0) {
+                    localStorage.setItem('tweetBattleScore', score.toString());
+                    window.location.href = `gameover.html?score=${score}`;
+                }
+            }, 300);
+        }, 300);
     }
 }
 
