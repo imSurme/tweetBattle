@@ -31,10 +31,12 @@
       }
     </script>
     <style>
+        :root { --safe-bottom: env(safe-area-inset-bottom); }
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            min-height: max(884px, 100dvh);
+            min-height: 100svh;
+            overflow-x: hidden;
         }
         .material-symbols-outlined {
             font-variation-settings:
@@ -62,7 +64,7 @@
     </style>
 </head>
 <body class="font-display overflow-hidden">
-<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+<div class="relative flex h-screen w-full flex-col bg-gradient-to-b from-[#E8F5FD] to-background-light dark:from-[#101b22] dark:to-[#101b22] group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; height: 100svh;'>
 <!-- Top App Bar -->
 <div class="flex flex-col items-center p-4 pb-2 justify-center bg-transparent">
 <span class="material-symbols-outlined text-4xl text-primary mb-2" data-icon="swords">
@@ -72,7 +74,7 @@
 </div>
 
 <!-- Game Over Content -->
-<div class="flex flex-col items-center justify-center flex-1 px-4 py-8 overflow-y-auto min-h-0">
+<div class="flex flex-col items-center justify-center flex-1 px-4 py-8 overflow-y-auto min-h-0" style="padding-bottom: calc(7rem + var(--safe-bottom));">
 <div class="flex flex-col md:flex-row items-center gap-8 w-full max-w-4xl">
 <!-- Left Side: Icon and Title -->
 <div class="flex flex-col items-center gap-4 md:w-1/2">
@@ -107,7 +109,7 @@
 </div>
 
 <!-- Play Again Button -->
-<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm">
+<footer class="sticky bottom-0 p-4 bg-transparent backdrop-blur-sm" style="padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);">
 <div class="flex flex-1 gap-4 justify-between">
 <button id="playAgainButton" class="flex flex-1 min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105 active:scale-95">
 <span class="truncate">Tekrar Oyna</span>
